@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speculative Trade — Traveller Quick Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:       #0a1220;
+    --void-2:     #101c30;
+    --panel:      #14213a;
+    --hull:       #1c2c4a;
+    --line:       #2a3d5f;
+    --paper:      #eee7d6;
+    --paper-dim:  #b9c3d6;
+    --amber:      #f2a33b;
+    --amber-2:    #ffcd7a;
+    --cyan:       #4fd6c8;
+    --violet:     #b98af0;
+    --red:        #e8604c;
+    --shadow:     0 10px 30px rgba(0,0,0,.45);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 1200px 700px at 15% -10%, rgba(242,163,59,.10), transparent 60%),
+      radial-gradient(ellipse 900px 700px at 105% 10%, rgba(79,214,200,.10), transparent 55%),
+      var(--void);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    padding:28px 20px 60px;
+  }
+
+  .sheet{max-width:1180px;margin:0 auto;}
+
+  /* ---------- header ---------- */
+  header{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    gap:20px;flex-wrap:wrap;
+    padding-bottom:18px;margin-bottom:26px;
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--amber-2);opacity:.85;margin-bottom:8px;
+  }
+  h1{
+    font-family:'Rajdhani',sans-serif;font-weight:700;
+    font-size:44px;line-height:.95;margin:0;
+    letter-spacing:.01em;
+    color:var(--paper);
+  }
+  h1 span{color:var(--amber);}
+  .sub{font-size:14.5px;color:var(--paper-dim);margin-top:8px;max-width:520px;line-height:1.5;}
+  .refbadge{
+    font-family:'JetBrains Mono',monospace;font-size:12px;
+    color:var(--void);background:var(--amber);
+    padding:7px 14px;border-radius:3px;font-weight:700;
+    white-space:nowrap;height:fit-content;
+    box-shadow:var(--shadow);
+  }
+
+  /* ---------- flow ---------- */
+  .flow-label{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--paper-dim);margin:0 0 14px 2px;
+  }
+  .flow{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:10px;
+    position:relative;
+    margin-bottom:10px;
+  }
+  .arrow-row{
+    display:grid;grid-template-columns:repeat(7,1fr);
+    align-items:center;height:0;position:relative;top:-104px;pointer-events:none;
+  }
+  .node{
+    background:linear-gradient(160deg,var(--panel),var(--void-2));
+    border:1px solid var(--line);
+    border-top:3px solid var(--phase);
+    border-radius:6px;
+    padding:16px 12px 14px;
+    min-height:190px;
+    position:relative;
+    box-shadow:var(--shadow);
+  }
+  .node .num{
+    font-family:'Rajdhani',sans-serif;font-weight:700;font-size:30px;
+    color:var(--phase);line-height:1;margin-bottom:8px;
+  }
+  .node h3{
+    font-family:'Rajdhani',sans-serif;font-weight:600;font-size:16.5px;
+    margin:0 0 8px;line-height:1.15;color:var(--paper);
+  }
+  .node p{
+    font-size:12px;line-height:1.5;color:var(--paper-dim);margin:0;
+  }
+  .node .tag{
+    display:inline-block;margin-top:10px;
+    font-family:'JetBrains Mono',monospace;font-size:10px;
+    color:var(--phase);border:1px solid var(--phase);
+    padding:2px 6px;border-radius:3px;opacity:.9;
+  }
+  .n1,.n2,.n3,.n4{--phase:var(--amber);}
+  .n5{--phase:var(--cyan);}
+  .n6,.n7{--phase:var(--violet);}
+
+  .chevrons{
+    display:grid;grid-template-columns:repeat(6,1fr);
+    margin:-2px 0 22px;
+  }
+  .chev{
+    text-align:center;color:var(--line);font-size:20px;
+    grid-column:span 1;position:relative;left:calc(100%/14);
+  }
+
+  .phase-legend{
+    display:flex;gap:22px;margin:2px 0 30px 2px;flex-wrap:wrap;
+  }
+  .phase-legend div{
+    display:flex;align-items:center;gap:7px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--paper-dim);
+  }
+  .dot{width:9px;height:9px;border-radius:50%;}
+  .dot.a{background:var(--amber);}
+  .dot.c{background:var(--cyan);}
+  .dot.v{background:var(--violet);}
+
+  /* ---------- key details ---------- */
+  .details-head{
+    display:flex;align-items:center;gap:14px;margin:38px 0 16px;
+  }
+  .details-head h2{
+    font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;
+    margin:0;color:var(--amber-2);letter-spacing:.02em;
+  }
+  .details-head .rule{flex:1;height:1px;background:var(--line);}
+
+  .details-grid{
+    display:grid;
+    grid-template-columns:1.1fr 1.1fr 1fr 1.4fr;
+    gap:14px;
+  }
+  .card{
+    background:var(--panel);border:1px solid var(--line);
+    border-radius:6px;padding:16px;box-shadow:var(--shadow);
+  }
+  .card h4{
+    font-family:'Rajdhani',sans-serif;font-size:15.5px;font-weight:600;
+    margin:0 0 8px;display:flex;align-items:center;gap:8px;color:var(--paper);
+  }
+  .card h4 .ic{
+    width:20px;height:20px;border-radius:4px;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+    color:var(--void);
+  }
+  .card p{font-size:12px;line-height:1.55;color:var(--paper-dim);margin:0 0 6px;}
+  .card p:last-child{margin-bottom:0;}
+  .card b{color:var(--paper);font-weight:600;}
+  .card .stat{color:var(--amber-2);font-weight:700;}
+
+  .c1 .ic{background:var(--cyan);}
+  .c2 .ic{background:var(--red);}
+  .c3 .ic{background:var(--violet);}
+  .c4 .ic{background:var(--amber);}
+
+  /* price table */
+  table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:10.5px;}
+  th{
+    text-align:left;color:var(--paper-dim);font-weight:500;
+    padding:3px 4px;border-bottom:1px solid var(--line);
+  }
+  td{padding:3px 4px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--paper);}
+  tr.hi td{color:var(--amber-2);font-weight:700;}
+
+  footer{
+    margin-top:34px;padding-top:16px;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--paper-dim);opacity:.8;
+  }
+
+  @media (max-width:980px){
+    .flow{grid-template-columns:1fr;}
+    .arrow-row{display:none;}
+    .details-grid{grid-template-columns:1fr 1fr;}
+    h1{font-size:34px;}
+  }
+  @media (max-width:560px){
+    .details-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header>
+    <div>
+      <div class="eyebrow">Traveller · Core Rulebook · Making a Living</div>
+      <h1>Speculative <span>Trade</span></h1>
+      <div class="sub">Buying low and selling high across the stars — the seven steps that turn cargo space into Credits (or bankruptcy).</div>
+    </div>
+    <div class="refbadge">CRB p.241–243</div>
+  </header>
+
+  <div class="flow-label">The Trade Checklist</div>
+  <div class="flow">
+    <div class="node n1"><div class="num">01</div><h3>Find a Supplier</h3><p>Broker check, Average (8+), EDU or SOC, 1D days. Illegal goods use Streetwise instead. Starport size grants a DM.</p><div class="tag">SOURCING</div></div>
+    <div class="node n2"><div class="num">02</div><h3>Goods Available</h3><p>Roll on the Trade Goods table. Common Goods anywhere; Trade Goods need a matching Trade code. Quantity capped by population.</p><div class="tag">SOURCING</div></div>
+    <div class="node n3"><div class="num">03</div><h3>Purchase Price</h3><p>3D + Broker DM + Purchase DM − Sale DM − supplier's Broker (usu. 2). Check the Modified Price table for % of Base Price.</p><div class="tag">SOURCING</div></div>
+    <div class="node n4"><div class="num">04</div><h3>Purchase Goods</h3><p>Accept the price and pay up front. Decline it, and that supplier is off-limits for a month.</p><div class="tag">SOURCING</div></div>
+    <div class="node n5"><div class="num">05</div><h3>Travel</h3><p>Jump to another system. The wider the market gap, the more the price swings — that's where the profit lives.</p><div class="tag">TRANSIT</div></div>
+    <div class="node n6"><div class="num">06</div><h3>Find a Buyer</h3><p>Same method as Step 1 — Broker or Streetwise check against a local buyer or broker at the new market.</p><div class="tag">SELLING</div></div>
+    <div class="node n7"><div class="num">07</div><h3>Sale Price</h3><p>3D + Broker DM + Sale DM − Purchase DM − buyer's Broker (usu. 2). Check the Sale column for your payout.</p><div class="tag">SELLING</div></div>
+  </div>
+  <div class="chevrons">
+    <div class="chev">›</div><div class="chev">›</div><div class="chev">›</div><div class="chev">›</div><div class="chev">›</div><div class="chev">›</div>
+  </div>
+
+  <div class="phase-legend">
+    <div><span class="dot a"></span>Sourcing — origin world</div>
+    <div><span class="dot c"></span>Transit — between markets</div>
+    <div><span class="dot v"></span>Selling — destination world</div>
+  </div>
+
+  <div class="details-head"><h2>A Few Key Details</h2><div class="rule"></div></div>
+  <div class="details-grid">
+
+    <div class="card c1">
+      <h4><span class="ic">B</span>Local Brokers</h4>
+      <p>Hire one to find goods and negotiate for you. Broker skill <b>2D/3</b>, grants <span class="stat">DM+2</span> on the deal.</p>
+      <p>Flat fee: <span class="stat">10%</span> of gross proceeds.</p>
+    </div>
+
+    <div class="card c2">
+      <h4><span class="ic">!</span>Illegal Goods & Fixers</h4>
+      <p>Fixers use Streetwise <b>2D/3</b>, also <span class="stat">DM+2</span> to negotiate, but take <span class="stat">20%</span> of proceeds.</p>
+      <p>Roll a natural 2 for their skill → they're an informer, agent, or double-crosser.</p>
+    </div>
+
+    <div class="card c3">
+      <h4><span class="ic">✕</span>Rejected Deals</h4>
+      <p>Turn down an offered price and you can't return to that <b>supplier or buyer</b> for at least a month.</p>
+      <p>Each repeat attempt on the same world also carries <span class="stat">DM−1</span>.</p>
+    </div>
+
+    <div class="card c4">
+      <h4><span class="ic">%</span>Modified Price (excerpt)</h4>
+      <table>
+        <tr><th>Roll</th><th>Purchase</th><th>Sale</th></tr>
+        <tr><td>−3 or less</td><td>300%</td><td>10%</td></tr>
+        <tr><td>7</td><td>105%</td><td>75%</td></tr>
+        <tr class="hi"><td>8</td><td>100%</td><td>80%</td></tr>
+        <tr><td>10</td><td>90%</td><td>90%</td></tr>
+        <tr><td>15</td><td>65%</td><td>120%</td></tr>
+        <tr><td>25+</td><td>15%</td><td>400%</td></tr>
+      </table>
+    </div>
+
+  </div>
+
+  <footer>
+    <span>Traveller Core Rulebook (2022) — Trade, World &amp; Universe Creation</span>
+    <span>Full Modified Price table: p.243 · Trade Goods table: p.244–245</span>
+  </footer>
+
+</div>
+</body>
+</html>
