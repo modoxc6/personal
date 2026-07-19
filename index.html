@@ -2,18 +2,112 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Rich's Decks</title>
+<title>Rich's Projects</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; padding: 0 1rem; }
-  h1 { font-size: 1.5rem; }
-  ul { line-height: 1.8; }
+  :root{ color-scheme: dark; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#161310; }
+  body{ font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; color:#f4ecd8; }
+
+  .stage{ position:relative; overflow:hidden; padding:64px 24px 80px; }
+  .deco-riso{
+    position:absolute; inset:0; z-index:0;
+    background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 14px 14px;
+  }
+
+  .hub-header{ max-width:760px; margin:0 auto 44px; position:relative; z-index:2; }
+  .eyebrow{
+    font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+    font-size:12px; letter-spacing:.22em; text-transform:uppercase;
+    color:#ffb100; margin:0 0 10px; font-weight:700;
+  }
+  h1{
+    margin:0; text-wrap:balance;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-weight:800; text-transform:uppercase; font-size:46px; letter-spacing:.01em;
+    transform: skewX(-3deg); display:inline-block; position:relative; color:#fff;
+  }
+  h1::before{
+    content:attr(data-text); position:absolute; left:3px; top:3px; z-index:-1;
+    color:#ff4d94; mix-blend-mode:screen;
+  }
+
+  .card-grid{
+    max-width:760px; margin:0 auto; position:relative; z-index:2;
+    display:grid; grid-template-columns:1fr 1fr; gap:20px;
+  }
+  @media (max-width:640px){ .card-grid{ grid-template-columns:1fr; } }
+
+  .card{
+    display:flex; flex-direction:column; gap:10px;
+    background:#211c17; border:1px solid #35302a; border-radius:12px; padding:22px 22px 24px;
+    text-decoration:none; color:#f4ecd8; position:relative; z-index:0;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .card:focus-visible{ outline:2px solid #00c2a8; outline-offset:3px; }
+  @media (prefers-reduced-motion: no-preference){
+    .card:hover{ transform: translateY(-4px) rotate(-.4deg); }
+  }
+
+  /* four-color accent cycle — nth card just picks up the next color, no per-card CSS needed */
+  .card:nth-child(4n+1){ --accent:#00c2a8; }
+  .card:nth-child(4n+2){ --accent:#ff4d94; }
+  .card:nth-child(4n+3){ --accent:#ffb100; }
+  .card:nth-child(4n+4){ --accent:#7dd3fc; }
+
+  .card-flag{
+    position:absolute; top:0; left:0; width:36px; height:36px;
+    border-radius:12px 0 0 0; background:var(--accent);
+    clip-path: polygon(0 0, 100% 0, 0 100%); pointer-events:none;
+  }
+  .card-trace{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; }
+  .card-trace rect{
+    fill:none; stroke-width:2; stroke:var(--accent);
+    stroke-dasharray:100; stroke-dashoffset:100;
+    transition: stroke-dashoffset .4s ease-out;
+  }
+  .card:hover .card-trace rect, .card:focus-visible .card-trace rect{ stroke-dashoffset:0; }
+  @media (prefers-reduced-motion: reduce){ .card-trace rect{ transition:none; } }
+
+  .card-tag{
+    font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+    font-weight:700; width:fit-content; color:var(--accent);
+  }
+  .card h2{ margin:0; font-size:22px; font-family: ui-sans-serif, system-ui, sans-serif; text-transform:uppercase; }
+  .card p{ margin:0; font-size:13.5px; line-height:1.55; color:#b6a98f; flex:1; }
+  .card-link{ font-size:13px; font-weight:800; letter-spacing:.02em; color:#ffb100; }
 </style>
 </head>
 <body>
-<h1>Decks &amp; interactive docs</h1>
-<ul>
-  <li><a href="traveller-trade-onepager/">Speculative Trade — Traveller Quick Reference</a></li>
-</ul>
+<main class="stage">
+  <div class="deco-riso" aria-hidden="true"></div>
+
+  <header class="hub-header">
+    <p class="eyebrow">Personal</p>
+    <h1 data-text="Projects">Projects</h1>
+  </header>
+
+  <div class="card-grid">
+    <a class="card" href="https://modoxc6.github.io/sci-fi-dice-roller/" target="_blank" rel="noopener">
+      <span class="card-flag" aria-hidden="true"></span>
+      <svg class="card-trace" aria-hidden="true"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="11" pathLength="100"></rect></svg>
+      <span class="card-tag">Web App</span>
+      <h2>Roll or Die</h2>
+      <p>An animated dice roller for tabletop RPG sessions.</p>
+      <span class="card-link">Launch →</span>
+    </a>
+    <a class="card" href="https://modoxc6.github.io/personal/traveller-trade-onepager/" target="_blank" rel="noopener">
+      <span class="card-flag" aria-hidden="true"></span>
+      <svg class="card-trace" aria-hidden="true"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="11" pathLength="100"></rect></svg>
+      <span class="card-tag">Reference Sheet</span>
+      <h2>Speculative Trade</h2>
+      <p>A one-page cheat sheet for Traveller's trade rules.</p>
+      <span class="card-link">Open →</span>
+    </a>
+  </div>
+</main>
 </body>
 </html>
