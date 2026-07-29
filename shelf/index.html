@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<!--
+DIRECTION CONTRACT — "THE SHELF"
+THESIS: A watch log as the wall of a rental shop after closing. It refuses the poster
+  grid every tracker ships: the archive's default state is edge-on SPINES — dense,
+  scannable, physical — with only the newest arrivals hung face-out. Two aisles hang
+  over the shop, TV and film; you switch by walking to the other sign.
+OWN-WORLD: Dim aisle. Oxblood-black carpet ground, worn oak shelf boards with lit
+  front edges, clipped card-stock shelf-talkers (acid yellow in the TV aisle, fluoro
+  violet in the film aisle), teal plastic section dividers, steel bookends closing
+  part-filled shelves. Spines are vertical slices of the real jacket art under a
+  scrim. Archivo Narrow/Black for shelf lettering, Courier Prime for the paperwork.
+STORY: You pick an aisle, see what's newest face-out, then work the wall by year.
+  Anything you pull goes to the counter, where the full record is written up.
+FIRST VIEWPORT: Two aisle signs at full width — the one you're in lit in its card
+  stock, the other dim; stock count beneath; the face-out hang on a lit board; the
+  shelf-talker filter rail clipped to the board under it. The wall begins at the fold.
+FORM: Video-shop spine wall (5th of 7 grounded directions) staged as open-storage
+  annex — sparse hang over dense pull-out racks. Seed key 9edd736f.
+-->
+<html lang="en" data-shelf="tv">
+<head>
+<meta charset="utf-8">
+<title>TV Shelf</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Rich's TV and film log — every season and every film watched, on the shelf.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;900&family=Archivo+Narrow:wght@500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: dark;
+  --carpet:#180f12;
+  --board:#4a3423;
+  --board-lit:#8a6540;
+  --board-dark:#2a1c12;
+  --label:#e9d24b;          /* TV aisle card stock */
+  --label-ink:#241a06;
+  --divider:#16a89a;
+  --ink:#f2e8da;
+  --ink-dim:#a08f7d;
+  --sign-off:#4b3a33;
+  --hot:#e2482f;
+  --spine-w:43px;
+  --spine-h:232px;
+  --board-h:38px;
+}
+html[data-shelf="film"]{ --label:#c08bff; --label-ink:#1d0b30; }  /* film aisle card stock */
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--carpet);
+  color:var(--ink);
+  font-family:"Archivo",system-ui,sans-serif;
+  font-size:15px;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body::before{ /* carpet weave */
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,.014) 0 2px, transparent 2px 4px),
+    radial-gradient(120% 80% at 50% -10%, rgba(255,190,120,.07), transparent 60%);
+}
+.wrap{position:relative;z-index:1;max-width:1360px;margin:0 auto;padding:0 20px 120px}
+
+/* ── aisle signs: the switcher IS the masthead ─────────────── */
+.signs{display:flex;gap:clamp(20px,4vw,54px);flex-wrap:wrap;align-items:baseline;
+  padding:44px 0 14px;margin:0}
+.sign{
+  background:none;border:0;padding:0;cursor:pointer;
+  font-family:"Archivo",sans-serif;font-weight:900;
+  font-size:clamp(38px,7vw,86px);line-height:.86;letter-spacing:-.03em;
+  text-transform:uppercase;color:var(--sign-off);
+  transition:color .18s;
+}
+.sign[aria-current="page"]{color:var(--label)}
+.sign:not([aria-current]):hover{color:var(--ink-dim)}
+.sign:focus-visible{outline:2px solid var(--label);outline-offset:4px}
+.plate-meta{
+  font-family:"Courier Prime",monospace;font-size:12px;line-height:1.7;
+  color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em;
+  margin:0 0 30px;
+}
+.plate-meta b{color:var(--ink);font-weight:700}
+
+/* ── shelf board (standalone, around the rail) ─────────────── */
+.board{
+  position:relative;height:15px;border-radius:0 0 3px 3px;
+  background:linear-gradient(var(--board-lit) 0 1px, var(--board) 1px 6px, var(--board-dark));
+  box-shadow:0 14px 26px -10px #000, inset 0 -2px 3px rgba(0,0,0,.6);
+  margin-bottom:34px;
+}
+.board::after{
+  content:"";position:absolute;inset:1px 0 0;opacity:.35;
+  background:repeating-linear-gradient(90deg, transparent 0 7px, rgba(0,0,0,.35) 7px 8px, transparent 8px 23px);
+}
+
+/* ── section head + divider tab ───────────────────────────── */
+.sect-head{display:flex;align-items:flex-end;gap:14px;margin:0 0 14px}
+.tab{
+  background:var(--divider);color:#04302c;font-family:"Archivo Narrow",sans-serif;
+  font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:13px;
+  padding:5px 24px 6px;border-radius:3px 3px 0 0;
+  clip-path:polygon(0 0,100% 0,calc(100% - 9px) 100%,9px 100%);
+}
+.sect-count{font-family:"Courier Prime",monospace;font-size:11.5px;color:var(--ink-dim);padding-bottom:5px}
+
+/* ── the face-out hang ────────────────────────────────────── */
+.hang-wrap{position:relative}
+.hang-wrap::after{
+  content:"";position:absolute;top:0;bottom:0;right:0;width:90px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--carpet));
+}
+.hang{display:flex;gap:38px;align-items:flex-end;overflow-x:auto;padding:0 90px 10px 0;scrollbar-width:thin}
+.faceout{
+  flex:0 0 auto;width:168px;text-align:left;background:none;border:0;padding:0;
+  cursor:pointer;color:inherit;font:inherit;
+}
+.faceout img{
+  width:168px;aspect-ratio:2/3;object-fit:cover;display:block;border-radius:2px;
+  box-shadow:0 16px 30px -12px #000, 0 0 0 1px rgba(255,255,255,.09);
+  transition:transform .25s cubic-bezier(.2,.8,.3,1), box-shadow .25s;
+  transform-origin:bottom center;
+}
+.faceout:hover img,.faceout:focus-visible img{transform:translateY(-9px) rotate(-.7deg);box-shadow:0 26px 40px -14px #000,0 0 0 1px var(--label)}
+.faceout:focus-visible{outline:none}
+.talker{
+  display:block;margin-top:16px;background:var(--label);color:var(--label-ink);
+  font-family:"Courier Prime",monospace;font-size:10.5px;line-height:1.45;
+  padding:6px 8px 7px;border-radius:1px;transform:rotate(-.5deg);
+  box-shadow:0 4px 10px -4px #000;min-height:52px;
+}
+.talker strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.02em;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.talker span{display:block;opacity:.72}
+
+/* ── filter rail: shelf-talkers clipped to the board ──────── */
+.rail{
+  display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+  padding:14px 16px;
+  background:linear-gradient(#241a1d,#1c1316);
+  border:1px solid #3a2b2e;border-radius:4px;
+  box-shadow:0 10px 24px -14px #000;
+}
+.rail-lbl{font-family:"Courier Prime",monospace;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-dim)}
+.chip{
+  font-family:"Archivo Narrow",sans-serif;font-weight:600;font-size:12.5px;
+  text-transform:uppercase;letter-spacing:.07em;
+  background:#2e2126;color:var(--ink-dim);border:1px solid #43323a;
+  padding:5px 12px 6px;border-radius:2px;cursor:pointer;
+  transition:background .13s,color .13s,border-color .13s;
+}
+.chip:hover{color:var(--ink);border-color:#6a5057}
+.chip[aria-pressed="true"]{background:var(--label);color:var(--label-ink);border-color:var(--label)}
+.chip:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--label);outline-offset:2px}
+select,input[type=search]{
+  font-family:"Courier Prime",monospace;font-size:12px;color:var(--ink);
+  background:#2e2126;border:1px solid #43323a;border-radius:2px;padding:6px 9px;
+}
+input[type=search]{min-width:190px}
+.rail-sep{width:1px;align-self:stretch;background:#3a2b2e;margin:0 4px}
+.rail-count{margin-left:auto;font-family:"Courier Prime",monospace;font-size:11.5px;color:var(--label)}
+
+/* ── the wall ─────────────────────────────────────────────── */
+/* Rows wrap, and the board is painted once per row so every shelf has a floor. */
+.shelf{
+  display:flex;flex-wrap:wrap;align-items:flex-end;column-gap:3px;row-gap:var(--board-h);
+  min-height:calc(var(--spine-h) + var(--board-h));
+  padding:0 0 var(--board-h) 2px;margin-bottom:16px;
+  background-repeat:repeat-y;
+  background-image:repeating-linear-gradient(180deg,
+    transparent 0 var(--spine-h),
+    var(--board-lit) var(--spine-h) calc(var(--spine-h) + 1px),
+    var(--board)     calc(var(--spine-h) + 1px) calc(var(--spine-h) + 6px),
+    var(--board-dark) calc(var(--spine-h) + 6px) calc(var(--spine-h) + 15px),
+    rgba(0,0,0,.5)   calc(var(--spine-h) + 15px) calc(var(--spine-h) + 21px),
+    transparent      calc(var(--spine-h) + 21px) calc(var(--spine-h) + var(--board-h)));
+}
+.bookend{
+  flex:0 0 8px;height:calc(var(--spine-h) * .72);margin-left:5px;border-radius:1px;
+  background:linear-gradient(90deg,#6e747c,#454a51 35%,#24272c);
+  box-shadow:0 6px 12px -7px #000, inset 0 1px 0 rgba(255,255,255,.28);
+}
+.spine{
+  flex:0 0 var(--spine-w);height:var(--spine-h);position:relative;
+  border:0;padding:0;cursor:pointer;border-radius:1px;overflow:hidden;
+  background:#231a1d;
+  box-shadow:inset -7px 0 12px -6px rgba(0,0,0,.95), inset 5px 0 8px -6px rgba(255,255,255,.22), 0 6px 14px -8px #000;
+  transition:transform .18s cubic-bezier(.2,.8,.3,1);
+  transform-origin:bottom center;
+  display:block;
+}
+.spine img{ /* a narrow vertical slice of the real jacket, lazily fetched.
+   Rendered at poster width and cropped by the spine, not fitted to it —
+   object-fit:cover would show a third of the artwork instead of a spine. */
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:520px;height:auto;max-width:none;
+}
+.spine::before{ /* scrim so lettering reads */
+  content:"";position:absolute;inset:0;z-index:1;
+  background:linear-gradient(90deg,rgba(0,0,0,.42),rgba(0,0,0,.80) 45%,rgba(0,0,0,.55));
+}
+.spine-txt{
+  position:absolute;inset:9px 0 22px;z-index:2;
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  font-family:"Archivo Narrow",sans-serif;font-weight:700;font-size:11.5px;
+  letter-spacing:.03em;text-transform:uppercase;color:#fff;
+  text-shadow:0 1px 3px rgba(0,0,0,.9);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  display:flex;align-items:flex-start;justify-content:center;padding-top:2px;
+}
+.spine-foot{ /* classification sticker at the spine's foot */
+  position:absolute;left:0;right:0;bottom:0;z-index:2;height:18px;
+  display:flex;align-items:center;justify-content:center;gap:1.5px;
+  background:rgba(0,0,0,.72);
+}
+.pip{width:3.5px;height:3.5px;border-radius:50%;background:var(--label)}
+.pip.half{background:linear-gradient(90deg,var(--label) 50%,rgba(255,255,255,.18) 50%)}
+.pip.off{background:rgba(255,255,255,.2)}
+.spine[data-status="In Progress"]{box-shadow:inset -7px 0 12px -6px rgba(0,0,0,.95),0 0 0 1.5px var(--hot),0 6px 14px -8px #000}
+.spine:hover,.spine:focus-visible{transform:translateY(-16px);z-index:5;outline:none}
+.spine:hover .spine-txt,.spine:focus-visible .spine-txt{color:var(--label)}
+.shelf .spine:last-of-type{transform:rotate(-3.5deg);transform-origin:bottom right}
+.shelf .spine:last-of-type:hover,.shelf .spine:last-of-type:focus-visible{transform:translateY(-16px) rotate(-3.5deg)}
+
+.empty{
+  font-family:"Courier Prime",monospace;color:var(--ink-dim);font-size:13px;
+  padding:44px 0;text-transform:uppercase;letter-spacing:.1em;
+}
+
+/* ── the counter (detail) ─────────────────────────────────── */
+dialog.counter{
+  border:0;padding:0;background:none;color:var(--ink);max-width:none;width:100%;
+  margin:auto auto 0;max-height:92vh;
+}
+dialog.counter::backdrop{background:rgba(8,4,5,.76);backdrop-filter:blur(3px)}
+.counter-inner{
+  position:relative;
+  max-width:860px;margin:0 auto;background:linear-gradient(#241a1d,#1a1114);
+  border:1px solid #45333a;border-bottom:0;border-radius:8px 8px 0 0;
+  box-shadow:0 -20px 60px -20px #000;
+  padding:30px 34px 38px;display:flex;gap:30px;
+}
+.counter-inner>img{width:190px;aspect-ratio:2/3;object-fit:cover;border-radius:2px;flex:0 0 auto;
+  box-shadow:0 18px 34px -14px #000,0 0 0 1px rgba(255,255,255,.1)}
+.c-body{flex:1;min-width:0}
+.c-body h2{font-family:"Archivo",sans-serif;font-weight:900;font-size:29px;line-height:1.03;
+  margin:0 0 4px;text-transform:uppercase;letter-spacing:-.015em;text-wrap:balance}
+.c-sub{font-family:"Courier Prime",monospace;font-size:12px;color:var(--label);
+  text-transform:uppercase;letter-spacing:.08em;margin:0 0 18px}
+.c-rows{font-family:"Courier Prime",monospace;font-size:12.5px;line-height:1.95;
+  border-top:1px dashed #4a373d;padding-top:12px;margin:0}
+.c-rows div{display:flex;gap:14px}
+.c-rows dt{flex:0 0 104px;color:var(--ink-dim);text-transform:uppercase;font-size:11px;letter-spacing:.08em}
+.c-rows dd{margin:0;color:var(--ink)}
+.c-synopsis{font-size:13.5px;line-height:1.62;color:var(--ink-dim);margin:16px 0 0;max-width:56ch}
+.c-tags{display:flex;flex-wrap:wrap;gap:5px;margin:16px 0 0}
+.c-tags span{font-family:"Courier Prime",monospace;font-size:10.5px;background:var(--label);
+  color:var(--label-ink);padding:2px 7px 3px;border-radius:1px;transform:rotate(-.6deg)}
+.c-links{margin:18px 0 0;display:flex;gap:16px;flex-wrap:wrap;font-family:"Archivo Narrow",sans-serif;
+  font-weight:700;font-size:12.5px;text-transform:uppercase;letter-spacing:.09em}
+.c-links a{color:var(--divider);text-decoration:none;border-bottom:1.5px solid transparent}
+.c-links a:hover{border-bottom-color:var(--divider)}
+.c-close{position:absolute;top:14px;right:18px;background:none;border:0;color:var(--ink-dim);
+  font-family:"Courier Prime",monospace;font-size:12px;cursor:pointer;letter-spacing:.1em}
+.c-close:hover{color:var(--ink)}
+
+@media (max-width:640px){
+  .counter-inner{flex-direction:column;padding:24px 20px 30px;gap:20px}
+  .counter-inner>img{width:130px}
+  :root{--spine-w:30px;--spine-h:168px;--board-h:30px}
+  .signs{padding-top:28px;gap:18px}
+  .rail{gap:8px}
+  .rail-sep{display:none}
+  .rail select{flex:1 1 132px;min-width:0}
+  .rail input[type=search]{flex:1 1 100%;min-width:0}
+  .rail-count{flex:1 1 100%;margin-left:0;text-align:right}
+  .c-rows dt{flex:0 0 88px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1 class="signs">
+      <button class="sign" data-go="tv" aria-current="page">TV Shelf</button>
+      <button class="sign" data-go="film">Movie Shelf</button>
+    </h1>
+    <p class="plate-meta" id="plateMeta">Loading the shelf…</p>
+  </header>
+
+  <section aria-labelledby="nowhead">
+    <div class="sect-head">
+      <span class="tab" id="nowhead">Now Showing</span>
+      <span class="sect-count" id="nowCount"></span>
+    </div>
+    <div class="hang-wrap"><div class="hang" id="hang"></div></div>
+    <div class="board"></div>
+  </section>
+
+  <div class="rail" role="group" aria-label="Filter and sort the shelf">
+    <span class="rail-lbl">Sort</span>
+    <button class="chip" data-sort="recent" aria-pressed="true">Recent</button>
+    <button class="chip" data-sort="rating" aria-pressed="false">Top rated</button>
+    <button class="chip" data-sort="release" aria-pressed="false">Released</button>
+    <button class="chip" data-sort="title" aria-pressed="false">A–Z</button>
+    <span class="rail-sep"></span>
+    <span id="railExtra" style="display:contents"></span>
+    <select id="fTag" aria-label="Filter by genre"><option value="">Any genre</option></select>
+    <select id="fRating" aria-label="Minimum rating">
+      <option value="">Any rating</option><option value="5">5</option><option value="4.5">4.5+</option>
+      <option value="4">4+</option><option value="3.5">3.5+</option><option value="3">3+</option>
+    </select>
+    <input type="search" id="fSearch" placeholder="Search…" aria-label="Search">
+    <span class="rail-count" id="railCount"></span>
+  </div>
+
+  <div class="board" style="margin-top:34px;margin-bottom:40px"></div>
+
+  <main id="wall"></main>
+</div>
+
+<dialog class="counter" id="counter">
+  <div class="counter-inner" id="counterInner"></div>
+</dialog>
+
+<script>
+const $ = (s,r=document)=>r.querySelector(s);
+const esc = t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+
+const key=s=>s.finished||s.started||'';
+const yearOf=s=>key(s).slice(0,4)||'Undated';
+const nice=d=>!d?'—':(/^\d{4}$/.test(d)?d
+  :new Date(d+'T00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}));
+const stars=s=>s.rating!=null?`${s.rating} / 5`:'Unrated';
+const watched=s=>s.finished?nice(s.finished):(s.started?'Started '+nice(s.started):'Not recorded');
+
+/* Everything that differs between the two aisles lives here. */
+const SHELVES = {
+  tv: {
+    file:'shows.json', title:'TV Shelf', noun:'titles', hang:'Now Showing',
+    search:'Search titles…',
+    extra:`<span class="rail-lbl">For</span>
+           <button class="chip" data-eq="forWhom" data-val="Me" aria-pressed="false">Me</button>
+           <button class="chip" data-eq="forWhom" data-val="Us" aria-pressed="false">Us</button>
+           <span class="rail-sep"></span>
+           <select data-eq="service" aria-label="Filter by service"><option value="">Any service</option></select>`,
+    fills:[['service','service']],
+    hits:s=>[s.title],
+    sub:s=>[s.season,s.status,s.service],
+    rows:s=>[['Rating',stars(s)],['Watched',watched(s)],['First aired',nice(s.release)],
+             ['Watched by',s.forWhom==='Us'?'Together':(s.forWhom||'—')]],
+    stat:i=>`<b>${i.filter(s=>s.forWhom==='Us').length}</b> watched together`,
+  },
+  film: {
+    file:'movies.json', title:'Movie Shelf', noun:'films', hang:'Just Watched',
+    search:'Search titles, directors…',
+    extra:`<select data-eq="decade" aria-label="Filter by release decade"><option value="">Any decade</option></select>
+           <select data-eq="country" aria-label="Filter by country"><option value="">Any country</option></select>`,
+    fills:[['decade','decade'],['country','country']],
+    hits:s=>[s.title,s.director],
+    sub:s=>[s.release,s.runtime,s.country],
+    rows:s=>[['Rating',stars(s)],['Watched',watched(s)],['Released',s.release||'—'],
+             ['Director',s.director||'—'],['Runtime',s.runtime||'—']],
+    stat:i=>`<b>${new Set(i.map(s=>s.director).filter(Boolean)).size}</b> directors`,
+  },
+};
+
+let SHELF='tv', ITEMS=[], state={sort:'recent',eq:{},tag:'',rating:'',q:''};
+const cfg=()=>SHELVES[SHELF];
+
+function pips(r){
+  if(r==null) return '<span class="pip off"></span>';
+  let h='';
+  for(let i=1;i<=5;i++) h+= r>=i ? '<span class="pip"></span>'
+    : (r>=i-.5 ? '<span class="pip half"></span>' : '<span class="pip off"></span>');
+  return h;
+}
+
+function matches(s){
+  for(const [field,val] of Object.entries(state.eq)){
+    if(!val) continue;
+    if(field==='decade'){ if((s.release||'').slice(0,3)+'0'!==val) return false; }
+    else if(s[field]!==val) return false;
+  }
+  if(state.rating && !(s.rating>=+state.rating)) return false;
+  if(state.tag && !s.tags.includes(state.tag)) return false;
+  if(state.q && !cfg().hits(s).some(t=>(t||'').toLowerCase().includes(state.q))) return false;
+  return true;
+}
+
+const sorters={
+  recent:(a,b)=>key(b).localeCompare(key(a)),
+  rating:(a,b)=>(b.rating??-1)-(a.rating??-1)||key(b).localeCompare(key(a)),
+  release:(a,b)=>(b.release||'').localeCompare(a.release||''),
+  title:(a,b)=>a.title.localeCompare(b.title),
+};
+
+/* Spines are built once per entry and moved on re-render — rebuilding 749
+   <img> nodes on every keystroke would refetch every jacket. */
+function spine(s){
+  if(s._el) return s._el;
+  const b=document.createElement('button');
+  b.className='spine';
+  b.dataset.status=s.status;
+  b.setAttribute('aria-label',`${s.title}${s.rating!=null?', rated '+s.rating+' out of 5':', unrated'}`);
+  b.innerHTML=`${s.cover?`<img src="${esc(s.cover)}" alt="" loading="lazy" decoding="async">`:''}
+    <span class="spine-txt">${esc(s.title)}</span><span class="spine-foot">${pips(s.rating)}</span>`;
+  b.onclick=()=>openCounter(s);
+  return (s._el=b);
+}
+
+function render(){
+  const list=ITEMS.filter(matches).sort(sorters[state.sort]);
+  $('#railCount').textContent=`Showing ${list.length} of ${ITEMS.length}`;
+
+  const wall=$('#wall'); wall.textContent='';
+  if(!list.length){ wall.innerHTML='<p class="empty">Nothing on this shelf.</p>'; return; }
+
+  // Recent sections the wall by year; every other sort is one continuous run.
+  const groups = state.sort==='recent'
+    ? [...new Set(list.map(yearOf))].map(y=>[y, list.filter(s=>yearOf(s)===y)])
+    : [[{rating:'By rating',release:'By release',title:'A–Z'}[state.sort], list]];
+
+  const frag=document.createDocumentFragment();
+  for(const [label,items] of groups){
+    const sec=document.createElement('section');
+    sec.innerHTML=`<div class="sect-head"><span class="tab">${esc(label)}</span>
+      <span class="sect-count">${items.length} ${items.length===1?'title':'titles'}</span></div>`;
+    const shelf=document.createElement('div'); shelf.className='shelf';
+    items.forEach(s=>shelf.appendChild(spine(s)));
+    shelf.insertAdjacentHTML('beforeend','<span class="bookend" aria-hidden="true"></span>');
+    sec.appendChild(shelf);
+    frag.appendChild(sec);
+  }
+  wall.appendChild(frag);
+}
+
+function openCounter(s){
+  $('#counterInner').innerHTML=`
+    <button class="c-close" id="cClose">[ Close ]</button>
+    ${s.cover?`<img src="${esc(s.cover)}" alt="">`:''}
+    <div class="c-body">
+      <h2>${esc(s.title)}</h2>
+      <p class="c-sub">${cfg().sub(s).filter(Boolean).map(esc).join(' · ')}</p>
+      <dl class="c-rows">${cfg().rows(s).map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
+      ${s.synopsis?`<p class="c-synopsis">${esc(s.synopsis)}</p>`:''}
+      <div class="c-tags">${s.tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div>
+      <p class="c-links">${Object.entries(s.links||{})
+        .map(([n,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)} ↗</a>`).join('')}</p>
+    </div>`;
+  $('#cClose').onclick=()=>$('#counter').close();
+  $('#counter').showModal();
+}
+
+function buildHang(){
+  const now=ITEMS.filter(s=>s.status==='In Progress');
+  const recent=ITEMS.filter(s=>s.status!=='In Progress').sort(sorters.recent).slice(0,Math.max(0,9-now.length));
+  const hang=[...now,...recent];
+  $('#nowhead').textContent=cfg().hang;
+  $('#nowCount').textContent = now.length
+    ? `${now.length} on the go · ${recent.length} just finished`
+    : `the ${recent.length} most recent`;
+  $('#hang').innerHTML=hang.map((s,i)=>`
+    <button class="faceout" data-i="${i}">
+      ${s.cover?`<img src="${esc(s.cover)}" alt="${esc(s.title)}">`:''}
+      <span class="talker"><strong>${esc(s.title)}</strong>
+        <span>${s.status==='In Progress'?'▸ WATCHING NOW':'WATCHED '+nice(s.finished).toUpperCase()}
+        · ${s.rating!=null?s.rating+'/5':'UNRATED'}</span></span>
+    </button>`).join('');
+  $('#hang').querySelectorAll('.faceout').forEach(b=>b.onclick=()=>openCounter(hang[+b.dataset.i]));
+}
+
+function bindRail(){
+  $('#railExtra').innerHTML=cfg().extra;
+  $('#fSearch').placeholder=cfg().search;
+
+  // aisle-specific dropdowns are filled from the data itself
+  for(const [name,field] of cfg().fills){
+    const el=$(`#railExtra [data-eq="${name}"]`);
+    const vals = field==='decade'
+      ? [...new Set(ITEMS.map(s=>(s.release||'').slice(0,3)+'0').filter(v=>/^\d{4}$/.test(v)))].sort().reverse()
+      : [...new Set(ITEMS.map(s=>s[field]).filter(Boolean))].sort();
+    vals.forEach(v=>el.insertAdjacentHTML('beforeend',
+      `<option value="${esc(v)}">${esc(field==='decade'?v+'s':v)}</option>`));
+  }
+
+  $('#railExtra').querySelectorAll('.chip[data-eq]').forEach(c=>c.onclick=()=>{
+    const on=c.getAttribute('aria-pressed')==='true';
+    $('#railExtra').querySelectorAll(`.chip[data-eq="${c.dataset.eq}"]`)
+      .forEach(o=>o.setAttribute('aria-pressed','false'));
+    c.setAttribute('aria-pressed',String(!on));
+    state.eq[c.dataset.eq]=on?'':c.dataset.val; render();
+  });
+  $('#railExtra').querySelectorAll('select[data-eq]').forEach(sel=>
+    sel.onchange=()=>{state.eq[sel.dataset.eq]=sel.value;render()});
+
+  const tag=$('#fTag');
+  tag.length=1;
+  [...new Set(ITEMS.flatMap(s=>s.tags))].sort()
+    .forEach(v=>tag.insertAdjacentHTML('beforeend',`<option value="${esc(v)}">${esc(v)}</option>`));
+}
+
+function stats(){
+  const rated=ITEMS.filter(s=>s.rating!=null);
+  const avg=(rated.reduce((a,s)=>a+s.rating,0)/rated.length).toFixed(2);
+  const years=[...new Set(ITEMS.map(yearOf))].filter(y=>y!=='Undated').sort();
+  $('#plateMeta').innerHTML=
+    `Personal video library<br><b>${ITEMS.length}</b> ${cfg().noun} in stock · `+
+    `<b>${years[0]}–${years.at(-1)}</b><br>average rating <b>${avg}</b> · ${cfg().stat(ITEMS)}`;
+}
+
+async function load(shelf){
+  SHELF=shelf;
+  document.documentElement.dataset.shelf=shelf;
+  document.title=cfg().title;
+  document.querySelectorAll('.sign').forEach(b=>
+    b.dataset.go===shelf ? b.setAttribute('aria-current','page') : b.removeAttribute('aria-current'));
+
+  state={sort:'recent', eq:{}, tag:'', rating:'', q:''};
+  $('#fTag').value=''; $('#fRating').value=''; $('#fSearch').value='';
+  document.querySelectorAll('.chip[data-sort]').forEach(c=>
+    c.setAttribute('aria-pressed',String(c.dataset.sort==='recent')));
+
+  ITEMS = await (await fetch(cfg().file)).json();
+  stats(); bindRail(); buildHang(); render();
+}
+
+document.querySelectorAll('.sign').forEach(b=>b.onclick=()=>{
+  if(b.dataset.go!==SHELF) location.hash = b.dataset.go==='film' ? '#movies' : '#tv';
+});
+const fromHash=()=>location.hash==='#movies'?'film':'tv';
+addEventListener('hashchange',()=>{ load(fromHash()); scrollTo({top:0}); });
+document.querySelectorAll('.chip[data-sort]').forEach(c=>c.onclick=()=>{
+  document.querySelectorAll('.chip[data-sort]').forEach(o=>o.setAttribute('aria-pressed',String(o===c)));
+  state.sort=c.dataset.sort; render();
+});
+$('#fTag').onchange=e=>{state.tag=e.target.value;render()};
+$('#fRating').onchange=e=>{state.rating=e.target.value;render()};
+$('#fSearch').oninput=e=>{state.q=e.target.value.toLowerCase().trim();render()};
+
+load(fromHash());
+</script>
+</body>
+</html>
