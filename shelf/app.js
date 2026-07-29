@@ -9,8 +9,6 @@
     tv: {
       file: "shows.json",
       title: "Television",
-      label: "Personal TV log",
-      summary: "Every season logged from my Obsidian vault.",
       noun: "seasons",
       dialogLabel: "TV log entry",
       views: [
@@ -24,8 +22,6 @@
     movies: {
       file: "movies.json",
       title: "Movies",
-      label: "Personal movie log",
-      summary: "Every film logged from my Obsidian vault.",
       noun: "films",
       dialogLabel: "Movie log entry",
       views: [
@@ -57,9 +53,7 @@
 
   const elements = {
     body: document.body,
-    collectionLabel: document.querySelector("#collection-label"),
     pageTitle: document.querySelector("#page-title"),
-    pageSummary: document.querySelector("#page-summary"),
     collectionLinks: [...document.querySelectorAll("[data-collection-link]")],
     views: document.querySelector("#suggested-views"),
     panel: document.querySelector("#filter-panel"),
@@ -162,9 +156,8 @@
   function setupPage() {
     elements.body.dataset.collection = collection;
     document.title = `${config.title} | The Shelf`;
-    elements.collectionLabel.textContent = config.label;
     elements.pageTitle.textContent = config.title;
-    elements.pageSummary.textContent = config.summary;
+    elements.pageTitle.dataset.wordmark = config.title;
     elements.dialogLabel.textContent = config.dialogLabel;
 
     elements.collectionLinks.forEach((link) => {
