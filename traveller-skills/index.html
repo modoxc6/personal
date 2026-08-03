@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A skill reference and crew training matrix for Mongoose Traveller Core Rulebook Update 2022.">
+  <title>Traveller Skill Matrix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --page: #f2f3ef;
+      --surface: #fafbf7;
+      --surface-strong: #e7e9e3;
+      --ink: #181b1d;
+      --muted: #5c6265;
+      --line: #c9ceca;
+      --line-strong: #8f9895;
+      --accent: #c44238;
+      --accent-ink: #fff8f5;
+      --focus: #9f2d25;
+      --shadow: 0 18px 50px rgb(34 42 39 / 0.12);
+      --radius: 12px;
+      --skill-width: 12rem;
+      --description-width: 34rem;
+      font-family: Aptos, "Segoe UI", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 20rem;
+      background: var(--page);
+      color: var(--ink);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .page-shell {
+      width: min(100% - 2rem, 96rem);
+      margin: 0 auto;
+      padding: 2.5rem 0 3rem;
+    }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .kicker {
+      margin: 0 0 0.45rem;
+      color: var(--accent);
+      font-family: Bahnschrift, "Arial Narrow", sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 14ch;
+      margin: 0;
+      font-family: Bahnschrift, "Arial Narrow", sans-serif;
+      font-size: clamp(2.25rem, 6vw, 4.8rem);
+      font-weight: 700;
+      letter-spacing: -0.055em;
+      line-height: 0.94;
+    }
+
+    .intro {
+      max-width: 42rem;
+      margin: 1rem 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.55;
+    }
+
+    .edition-stamp {
+      max-width: 17rem;
+      padding: 0.9rem 1rem;
+      border-left: 3px solid var(--accent);
+      color: var(--muted);
+      font-family: "Cascadia Mono", Consolas, monospace;
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .search-wrap {
+      flex: 1;
+    }
+
+    .search-wrap label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    #skill-search {
+      width: 100%;
+      min-height: 2.8rem;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--ink);
+      padding: 0.65rem 0.85rem;
+    }
+
+    #skill-search::placeholder {
+      color: var(--muted);
+    }
+
+    #skill-search:focus-visible,
+    .reset-button:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--focus) 45%, transparent);
+      outline-offset: 2px;
+    }
+
+    .reset-button {
+      min-height: 2.8rem;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--ink);
+      padding: 0.65rem 0.9rem;
+      cursor: pointer;
+    }
+
+    .reset-button:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .reset-button:active {
+      transform: translateY(1px);
+    }
+
+    .table-frame {
+      overflow: auto;
+      max-height: calc(100dvh - 4rem);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      overscroll-behavior: contain;
+    }
+
+    table {
+      width: 100%;
+      min-width: 72rem;
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: fixed;
+    }
+
+    col.skill-column {
+      width: var(--skill-width);
+    }
+
+    col.description-column {
+      width: var(--description-width);
+    }
+
+    col.character-column {
+      width: 8.75rem;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+    }
+
+    tr:last-child th,
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    th:last-child,
+    td:last-child {
+      border-right: 0;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: var(--surface-strong);
+      color: var(--ink);
+      text-align: left;
+      vertical-align: bottom;
+    }
+
+    .label-heading {
+      padding: 1rem;
+      font-family: "Cascadia Mono", Consolas, monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .character-heading {
+      padding: 0.85rem 0.55rem 0.8rem;
+      text-align: center;
+    }
+
+    .portrait {
+      width: 4.5rem;
+      height: 4.5rem;
+      margin: 0 auto 0.65rem;
+      overflow: hidden;
+      border: 2px solid var(--surface);
+      border-radius: 50%;
+      background: var(--surface);
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    .portrait-image {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(2.2);
+      transform-origin: var(--portrait-origin, 50% 12%);
+    }
+
+    .character-name {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 750;
+      line-height: 1.18;
+    }
+
+    .trained-count {
+      display: block;
+      margin-top: 0.28rem;
+      color: var(--muted);
+      font-family: "Cascadia Mono", Consolas, monospace;
+      font-size: 0.66rem;
+      font-weight: 400;
+    }
+
+    tbody th {
+      padding: 0.8rem 1rem;
+      background: var(--surface);
+      font-family: Bahnschrift, "Arial Narrow", sans-serif;
+      font-size: 0.96rem;
+      font-weight: 700;
+      line-height: 1.25;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .description {
+      padding: 0.8rem 1rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.42;
+    }
+
+    .training-cell {
+      padding: 0;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .check-control {
+      display: grid;
+      min-height: 3.35rem;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .check-control:hover {
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+    }
+
+    .check-control input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .tick-box {
+      display: grid;
+      width: 1.65rem;
+      height: 1.65rem;
+      border: 1.5px solid var(--line-strong);
+      border-radius: 5px;
+      background: var(--surface);
+      color: var(--accent-ink);
+      font-size: 1.08rem;
+      font-weight: 800;
+      line-height: 1;
+      place-items: center;
+    }
+
+    .check-control input:checked + .tick-box {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .check-control input:checked + .tick-box::after {
+      content: "✓";
+    }
+
+    .check-control input:focus-visible + .tick-box {
+      outline: 3px solid color-mix(in srgb, var(--focus) 45%, transparent);
+      outline-offset: 2px;
+    }
+
+    tbody tr:hover th,
+    tbody tr:hover .description {
+      background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+    }
+
+    .table-note {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin: 0.8rem 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+
+    .table-note p {
+      margin: 0;
+    }
+
+    .result-count {
+      white-space: nowrap;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --page: #101416;
+        --surface: #181d20;
+        --surface-strong: #22292c;
+        --ink: #edf0eb;
+        --muted: #aeb6b4;
+        --line: #343d3f;
+        --line-strong: #667173;
+        --accent: #e05a4f;
+        --accent-ink: #fff8f5;
+        --focus: #ff8b81;
+        --shadow: 0 18px 50px rgb(0 0 0 / 0.35);
+      }
+    }
+
+    @media (max-width: 48rem) {
+      .page-shell {
+        width: 100%;
+        padding: 1.25rem 1rem 2rem;
+      }
+
+      .masthead {
+        grid-template-columns: 1fr;
+        align-items: start;
+        gap: 1rem;
+      }
+
+      .edition-stamp {
+        max-width: 100%;
+      }
+
+      .toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .table-frame {
+        max-height: calc(100dvh - 1rem);
+        border-radius: 8px;
+      }
+
+      .table-note {
+        flex-direction: column;
+      }
+    }
+
+    @media print {
+      :root {
+        color-scheme: light;
+        --page: #ffffff;
+        --surface: #ffffff;
+        --surface-strong: #eceeeb;
+        --ink: #181b1d;
+        --muted: #404648;
+        --line: #b7bcb9;
+        --line-strong: #666c6a;
+        --accent: #a92f27;
+        --accent-ink: #ffffff;
+        --shadow: none;
+      }
+
+      @page {
+        size: A4 landscape;
+        margin: 10mm;
+      }
+
+      body {
+        background: var(--page);
+      }
+
+      .page-shell {
+        width: 100%;
+        padding: 0;
+      }
+
+      .masthead {
+        grid-template-columns: 1fr auto;
+        margin-bottom: 6mm;
+      }
+
+      h1 {
+        font-size: 28pt;
+      }
+
+      .intro {
+        font-size: 8.5pt;
+      }
+
+      .edition-stamp {
+        font-size: 7.5pt;
+      }
+
+      .toolbar,
+      .table-note {
+        display: none;
+      }
+
+      .table-frame {
+        overflow: visible;
+        max-height: none;
+        border-radius: 0;
+      }
+
+      table {
+        min-width: 0;
+      }
+
+      thead th {
+        position: static;
+      }
+
+      .portrait {
+        width: 11mm;
+        height: 11mm;
+        margin-bottom: 1.5mm;
+      }
+
+      .character-heading {
+        padding: 2mm 1mm;
+      }
+
+      .character-name {
+        font-size: 6.5pt;
+      }
+
+      .trained-count {
+        display: none;
+      }
+
+      .label-heading,
+      tbody th,
+      .description {
+        padding: 1.3mm 1.7mm;
+      }
+
+      .label-heading,
+      tbody th {
+        font-size: 6.6pt;
+      }
+
+      .description {
+        font-size: 5.8pt;
+        line-height: 1.18;
+      }
+
+      .check-control {
+        min-height: 6.8mm;
+      }
+
+      .tick-box {
+        width: 4.5mm;
+        height: 4.5mm;
+        border-radius: 1mm;
+        font-size: 8pt;
+      }
+    }
+  </style>
+  <style id="trade-sheet-theme">
+    :root {
+      color-scheme: dark;
+      --page: #0a1220;
+      --surface: #14213a;
+      --surface-soft: #0f1b2d;
+      --surface-strong: #182843;
+      --ink: #eee7d6;
+      --muted: #b9c3d6;
+      --line: #2a3d5f;
+      --line-strong: #40577c;
+      --accent: #f2a33b;
+      --accent-ink: #0a1220;
+      --focus: #ffcd7a;
+      --shadow: 0 10px 30px rgb(0 0 0 / 0.45);
+      --radius: 6px;
+      --skill-width: 11.5rem;
+      --description-width: 34.5rem;
+      font-family: Inter, sans-serif;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 92% 4%, rgb(67 198 194 / 0.10), transparent 30rem),
+        var(--page);
+      background-attachment: fixed;
+      color: var(--ink);
+      font-family: Inter, sans-serif;
+      line-height: 1.45;
+    }
+
+    .page-shell {
+      width: min(100% - 3rem, 92rem);
+      padding: 2rem 0 2.25rem;
+    }
+
+    .masthead {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 2rem;
+      margin-bottom: 1.55rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      margin-bottom: 0.45rem;
+      color: #ffcd7a;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: none;
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(2.65rem, 5vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 0.95;
+    }
+
+    h1 span {
+      color: var(--accent);
+    }
+
+    .intro {
+      max-width: 42rem;
+      margin-top: 0.65rem;
+      color: var(--muted);
+      font-size: 0.96rem;
+      line-height: 1.5;
+    }
+
+    .edition-stamp {
+      max-width: none;
+      padding: 0.46rem 0.9rem;
+      border: 0;
+      border-radius: 3px;
+      background: var(--accent);
+      box-shadow: var(--shadow);
+      color: var(--accent-ink);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+
+    .matrix-label {
+      margin: 0 0 0.65rem;
+      color: var(--muted);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .toolbar {
+      gap: 0.65rem;
+      margin-bottom: 0.8rem;
+    }
+
+    #skill-search,
+    .reset-button {
+      min-height: 2.65rem;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: var(--surface-soft);
+      color: var(--ink);
+      font-size: 0.88rem;
+    }
+
+    #skill-search {
+      padding: 0.6rem 0.8rem;
+    }
+
+    #skill-search::placeholder {
+      color: #8f9bb0;
+    }
+
+    #skill-search:focus-visible,
+    .reset-button:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .reset-button {
+      padding: 0.6rem 0.9rem;
+      font-family: Rajdhani, sans-serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .reset-button:hover {
+      border-color: var(--accent);
+      background: var(--surface);
+      color: var(--accent);
+    }
+
+    .table-frame {
+      max-height: calc(100dvh - 3rem);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-soft);
+      box-shadow: var(--shadow);
+      scrollbar-color: var(--line-strong) var(--surface-soft);
+    }
+
+    table {
+      min-width: 78rem;
+    }
+
+    col.character-column {
+      width: 9.25rem;
+    }
+
+    th,
+    td {
+      border-color: var(--line);
+    }
+
+    thead th {
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    .label-heading {
+      padding: 0.9rem 1rem;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+    }
+
+    .label-heading:first-child {
+      left: 0;
+      z-index: 5;
+    }
+
+    .character-heading {
+      padding: 0.7rem 0.5rem 0.75rem;
+      border-top: 3px solid var(--accent);
+    }
+
+    .portrait {
+      width: 4.75rem;
+      height: 4.75rem;
+      margin-bottom: 0.55rem;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: #d8dde2;
+      box-shadow: 0 6px 18px rgb(0 0 0 / 0.28);
+    }
+
+    .portrait-image {
+      object-position: var(--portrait-position, 50% 0%);
+      transform: scale(var(--portrait-scale, 1));
+      transform-origin: 50% 0%;
+    }
+
+    .character-name {
+      font-family: Rajdhani, sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      line-height: 1.05;
+    }
+
+    .trained-count {
+      margin-top: 0.32rem;
+      color: var(--muted);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.62rem;
+      font-weight: 500;
+    }
+
+    tbody th,
+    tbody td {
+      background: var(--surface-soft);
+    }
+
+    tbody tr:nth-child(even) th,
+    tbody tr:nth-child(even) td {
+      background: #111f34;
+    }
+
+    tbody th {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      padding: 0.72rem 1rem;
+      color: var(--ink);
+      font-family: Rajdhani, sans-serif;
+      font-size: 0.96rem;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+
+    .description {
+      padding: 0.72rem 1rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.38;
+    }
+
+    .check-control {
+      min-height: 3.15rem;
+    }
+
+    .check-control:hover {
+      background: rgb(242 163 59 / 0.08);
+    }
+
+    .tick-box {
+      width: 1.6rem;
+      height: 1.6rem;
+      border: 1px solid var(--line-strong);
+      border-radius: 4px;
+      background: var(--page);
+      color: var(--accent-ink);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+    }
+
+    .check-control input:checked + .tick-box {
+      border-color: var(--accent);
+      background: var(--accent);
+      box-shadow: 0 0 0 1px rgb(242 163 59 / 0.2);
+    }
+
+    .check-control input:checked + .tick-box::after {
+      content: "\2713";
+    }
+
+    .check-control input:focus-visible + .tick-box {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    tbody tr:hover th,
+    tbody tr:hover td {
+      background: var(--surface-strong);
+    }
+
+    .table-note {
+      margin-top: 1.2rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--line);
+      color: #8f9bb0;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.64rem;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 48rem) {
+      .page-shell {
+        width: 100%;
+        padding: 1.2rem 1rem 2rem;
+      }
+
+      .masthead {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+      }
+
+      .edition-stamp {
+        justify-self: start;
+      }
+
+      .table-frame {
+        max-height: calc(100dvh - 1rem);
+      }
+    }
+
+    @media print {
+      :root {
+        color-scheme: light;
+        --page: #ffffff;
+        --surface: #e9edf1;
+        --surface-soft: #ffffff;
+        --surface-strong: #eef1f4;
+        --ink: #0a1220;
+        --muted: #38465d;
+        --line: #9aa6b7;
+        --line-strong: #66758c;
+        --accent: #d98316;
+        --accent-ink: #0a1220;
+        --shadow: none;
+      }
+
+      body {
+        background: var(--page);
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .matrix-label {
+        color: var(--muted);
+      }
+
+      tbody tr:nth-child(even) th,
+      tbody tr:nth-child(even) td {
+        background: #f3f5f7;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <header class="masthead">
+      <div>
+        <p class="kicker">Traveller · Core Rulebook · Skills and Tasks</p>
+        <h1>Traveller <span>Skills</span></h1>
+        <p class="intro">The complete core skill list, with the crew's training at a glance.</p>
+      </div>
+      <div class="edition-stamp">CRB p.58-72</div>
+    </header>
+
+    <div class="matrix-label">The Crew Matrix</div>
+
+    <div class="toolbar" aria-label="Table tools">
+      <div class="search-wrap">
+        <label for="skill-search">Find a skill</label>
+        <input id="skill-search" type="search" placeholder="Find a skill or use..." autocomplete="off">
+      </div>
+      <button class="reset-button" id="reset-ticks" type="button">Restore published ticks</button>
+    </div>
+
+    <section class="table-frame" aria-label="Traveller skills and crew training">
+      <table>
+        <caption class="sr-only">All Traveller core skills, their uses and trained crew members.</caption>
+        <colgroup>
+          <col class="skill-column">
+          <col class="description-column">
+          <col class="character-column" span="4">
+        </colgroup>
+        <thead>
+          <tr id="table-headings">
+            <th class="label-heading" scope="col">Skill</th>
+            <th class="label-heading" scope="col">Used for</th>
+          </tr>
+        </thead>
+        <tbody id="skill-rows"></tbody>
+      </table>
+    </section>
+
+    <div class="table-note">
+      <p>Published ticks are hardcoded. Changes made here are saved only in this browser.</p>
+      <p class="result-count" id="result-count">39 skills shown</p>
+    </div>
+  </main>
+
+  <script>
+    const characters = [
+      {
+        id: "graxius-stclair",
+        name: "Graxius StClair",
+        portrait: "assets/graxius-stclair.png",
+        portraitPosition: "50% 0%",
+        portraitScale: 2.2,
+        trained: []
+      },
+      {
+        id: "kostas-backett",
+        name: "Kostas Backett",
+        portrait: "assets/kostas-backett.png",
+        portraitPosition: "50% 42%",
+        portraitScale: 1,
+        trained: ["Athletics", "Astrogation", "Electronics", "Engineer", "Flyer", "Gunner", "Gun Combat", "Mechanic", "Melee", "Pilot", "Recon", "Science", "Seafarer", "Stealth", "Vacc Suit"]
+      },
+      {
+        id: "ozymandius-forthrast",
+        name: "Ozymandius Forthrast",
+        portrait: "assets/ozymandius-forthrast.png",
+        portraitPosition: "50% 0%",
+        portraitScale: 2.15,
+        trained: []
+      },
+      {
+        id: "tyrus-cassius",
+        name: "Tyrus Cassius",
+        portrait: "assets/tyrus-cassius.png",
+        portraitPosition: "50% 0%",
+        portraitScale: 2.05,
+        trained: []
+      }
+    ];
+
+    const skills = [
+      ["Admin", "Navigating bureaucracy, handling paperwork and maintaining inventories, manifests and records."],
+      ["Advocate", "Understanding law, arguing cases and conducting formal debate or public speaking."],
+      ["Animals", "Handling, riding, training and providing veterinary care for animals."],
+      ["Art", "Creating or performing art, including acting, music, writing, holography and visual media."],
+      ["Astrogation", "Plotting starship courses and calculating accurate jumps between systems."],
+      ["Athletics", "Physical feats involving dexterity, endurance or strength, including climbing, running and swimming."],
+      ["Broker", "Negotiating trades, finding buyers and arranging commercially favourable deals."],
+      ["Carouse", "Socialising, entertaining people and gathering information in informal social settings."],
+      ["Deception", "Lying, disguising yourself, performing sleight of hand and otherwise fooling observers."],
+      ["Diplomat", "Conducting formal negotiations, observing high-society etiquette and smoothing over social mistakes."],
+      ["Drive", "Controlling ground vehicles such as wheeled, tracked, walking, burrowing or hover vehicles."],
+      ["Electronics", "Operating, repairing and creating computers, communications, sensors and remote-control systems."],
+      ["Engineer", "Operating, maintaining and repairing spacecraft drives, power plants and life-support systems."],
+      ["Explosives", "Building, placing and disarming bombs, demolition charges and breaching explosives."],
+      ["Flyer", "Piloting atmospheric vehicles such as grav craft, helicopters, aeroplanes and airships."],
+      ["Gambler", "Playing games of chance, assessing odds and making informed bets."],
+      ["Gun Combat", "Using personal ranged weapons, including archaic, projectile and energy weapons."],
+      ["Gunner", "Operating spacecraft weapons such as turrets, spinal mounts, orbital artillery and defensive screens."],
+      ["Heavy Weapons", "Using artillery, missile launchers, flamethrowers and vehicle-mounted heavy weapons."],
+      ["Investigate", "Examining evidence through observation, forensic work and detailed analysis."],
+      ["Jack-of-All-Trades", "Reducing the penalty for attempting tasks in which you have no appropriate skill."],
+      ["Language", "Speaking, reading and writing a language other than your native language."],
+      ["Leadership", "Directing, inspiring and rallying allies, particularly during stressful situations or combat."],
+      ["Mechanic", "Maintaining and repairing ordinary machinery and equipment that does not require specialised engineering."],
+      ["Medic", "Providing first aid, diagnosis, treatment, surgery and long-term medical care."],
+      ["Melee", "Fighting unarmed or with blades, bludgeons, improvised weapons and natural weapons."],
+      ["Navigation", "Plotting routes and finding directions on a planet's surface."],
+      ["Persuade", "Informally influencing others through bargaining, fast talk, bluffing, bribery or intimidation."],
+      ["Pilot", "Piloting small craft, ordinary spacecraft and capital ships."],
+      ["Profession", "Practising a particular occupation to produce useful goods, services or income."],
+      ["Recon", "Scouting locations and noticing dangers, threats or details that appear out of place."],
+      ["Science", "Understanding and practically applying a scientific field such as biology, physics or planetology."],
+      ["Seafarer", "Operating boats, sailing vessels, ocean-going ships and submarines."],
+      ["Stealth", "Remaining unseen, unheard and otherwise unnoticed."],
+      ["Steward", "Providing hospitality and personal service, especially for nobles and high passengers aboard ships."],
+      ["Streetwise", "Understanding urban society, criminal networks, fixers and local power structures."],
+      ["Survival", "Finding food, building shelter and surviving hazards in wilderness environments."],
+      ["Tactics", "Planning and coordinating military or naval actions, from small units to spacecraft fleets."],
+      ["Vacc Suit", "Wearing and operating spacesuits, environmental suits and advanced battle dress."]
+    ];
+
+    const storageKey = "traveller-skill-matrix-v3";
+    const headings = document.querySelector("#table-headings");
+    const rows = document.querySelector("#skill-rows");
+    const search = document.querySelector("#skill-search");
+    const resultCount = document.querySelector("#result-count");
+
+    const defaultState = () => Object.fromEntries(
+      characters.map(character => [character.id, [...character.trained]])
+    );
+
+    const loadState = () => {
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey));
+        return saved && typeof saved === "object" ? saved : defaultState();
+      } catch {
+        return defaultState();
+      }
+    };
+
+    let state = loadState();
+
+    const saveState = () => localStorage.setItem(storageKey, JSON.stringify(state));
+
+    const slug = value => value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+    characters.forEach(character => {
+      const heading = document.createElement("th");
+      heading.className = "character-heading";
+      heading.scope = "col";
+      heading.innerHTML = `
+        <div class="portrait">
+          <img class="portrait-image" src="${character.portrait}" alt="Portrait of ${character.name}" style="--portrait-position:${character.portraitPosition}; --portrait-scale:${character.portraitScale}">
+        </div>
+        <span class="character-name">${character.name}</span>
+        <span class="trained-count" data-count-for="${character.id}">0 trained</span>
+      `;
+      headings.append(heading);
+    });
+
+    skills.forEach(([name, description]) => {
+      const row = document.createElement("tr");
+      row.dataset.search = `${name} ${description}`.toLowerCase();
+      row.innerHTML = `
+        <th scope="row">${name}</th>
+        <td class="description">${description}</td>
+      `;
+
+      characters.forEach(character => {
+        const cell = document.createElement("td");
+        cell.className = "training-cell";
+        const inputId = `${character.id}-${slug(name)}`;
+        const checked = (state[character.id] || []).includes(name);
+        cell.innerHTML = `
+          <label class="check-control" for="${inputId}" title="${character.name}: ${name}">
+            <input id="${inputId}" type="checkbox" data-character="${character.id}" data-skill="${name}" ${checked ? "checked" : ""}>
+            <span class="tick-box" aria-hidden="true"></span>
+            <span class="sr-only">${character.name} is trained in ${name}</span>
+          </label>
+        `;
+        row.append(cell);
+      });
+
+      rows.append(row);
+    });
+
+    const updateCounts = () => {
+      characters.forEach(character => {
+        const count = document.querySelectorAll(`input[data-character="${character.id}"]:checked`).length;
+        document.querySelector(`[data-count-for="${character.id}"]`).textContent = `${count} trained`;
+      });
+    };
+
+    rows.addEventListener("change", event => {
+      const input = event.target;
+      if (!(input instanceof HTMLInputElement) || input.type !== "checkbox") return;
+
+      const characterId = input.dataset.character;
+      const skillName = input.dataset.skill;
+      const trained = new Set(state[characterId] || []);
+      input.checked ? trained.add(skillName) : trained.delete(skillName);
+      state[characterId] = [...trained];
+      saveState();
+      updateCounts();
+    });
+
+    search.addEventListener("input", () => {
+      const query = search.value.trim().toLowerCase();
+      let visible = 0;
+      rows.querySelectorAll("tr").forEach(row => {
+        const matches = !query || row.dataset.search.includes(query);
+        row.hidden = !matches;
+        if (matches) visible += 1;
+      });
+      resultCount.textContent = `${visible} ${visible === 1 ? "skill" : "skills"} shown`;
+    });
+
+    document.querySelector("#reset-ticks").addEventListener("click", () => {
+      state = defaultState();
+      saveState();
+      document.querySelectorAll(".training-cell input").forEach(input => {
+        input.checked = (state[input.dataset.character] || []).includes(input.dataset.skill);
+      });
+      updateCounts();
+    });
+
+    updateCounts();
+  </script>
+</body>
+</html>
