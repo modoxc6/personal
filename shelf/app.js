@@ -11,6 +11,8 @@
       title: "Television",
       noun: "seasons",
       dialogLabel: "TV log entry",
+      defaultSort: "recent",
+      searchHint: "Title, tag or service",
       views: [
         ["all", "All"],
         ["watching", "Watching now"],
@@ -24,6 +26,8 @@
       title: "Movies",
       noun: "films",
       dialogLabel: "Movie log entry",
+      defaultSort: "recent",
+      searchHint: "Title, tag or director",
       views: [
         ["all", "All"],
         ["recent", "Most recent"],
@@ -32,10 +36,33 @@
         ["horror", "Horror"],
       ],
     },
+    ttrpgs: {
+      file: "ttrpgs.json",
+      title: "TTRPGs",
+      noun: "books",
+      dialogLabel: "TTRPG book",
+      // No date is recorded for these, so alphabetical is the only meaningful default.
+      defaultSort: "title",
+      dated: false,
+      searchHint: "Title, game or tag",
+      views: [
+        ["all", "All"],
+        ["reading", "Reading now"],
+        ["next", "Up next"],
+        ["top", "Top rated"],
+        ["solo", "Solo"],
+        ["duo", "Duo"],
+        ["group", "Group"],
+        ["cthulhu", "Cthulhu"],
+        ["dnd", "D&D"],
+        ["cyberpunk", "Cyberpunk"],
+        ["backed", "Backed"],
+        ["played", "Played"],
+      ],
+    },
   };
 
-  const requestedCollection = params.get("collection");
-  const collection = requestedCollection === "movies" ? "movies" : "tv";
+  const collection = COLLECTIONS[params.get("collection")] ? params.get("collection") : "tv";
   const config = COLLECTIONS[collection];
 
   const state = {
@@ -47,8 +74,11 @@
     service: params.get("service") || "",
     decade: params.get("decade") || "",
     country: params.get("country") || "",
+    game: params.get("game") || "",
+    players: params.get("players") || "",
+    physical: params.get("format") || "",
     tag: params.get("tag") || "",
-    sort: params.get("sort") || "recent",
+    sort: params.get("sort") || config.defaultSort,
   };
 
   const elements = {
@@ -66,9 +96,15 @@
     service: document.querySelector("#filter-service"),
     decade: document.querySelector("#filter-decade"),
     country: document.querySelector("#filter-country"),
+    game: document.querySelector("#filter-game"),
+    bookStatus: document.querySelector("#filter-book-status"),
+    players: document.querySelector("#filter-players"),
+    physical: document.querySelector("#filter-physical"),
     sort: document.querySelector("#filter-sort"),
     tvFilters: [...document.querySelectorAll("[data-tv-filter]")],
     movieFilters: [...document.querySelectorAll("[data-movie-filter]")],
+    ttrpgFilters: [...document.querySelectorAll("[data-ttrpg-filter]")],
+    datedSortOptions: [...document.querySelectorAll("#filter-sort [data-dated-only]")],
     tagList: document.querySelector("#tag-list"),
     showAllTags: document.querySelector("#show-all-tags"),
     reset: document.querySelector("#reset-filters"),
@@ -103,8 +139,12 @@
     return value == null ? "" : String(value);
   }
 
+  // Diacritics are stripped so "mork" finds MÖRK BORG and "motstandare" finds Motståndare.
   function normalized(value) {
-    return text(value).toLocaleLowerCase("en-GB");
+    return text(value)
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase("en-GB");
   }
 
   function values(source, field) {
@@ -138,6 +178,7 @@
 
   function statusLabel(item) {
     if (item.status === "In Progress") return "In progress";
+    if (collection === "ttrpgs") return item.status || "Not started";
     if (item.status === "Abandoned") return "Abandoned";
     return item.finished ? `Finished ${yearOf(item.finished)}` : "Finished";
   }
@@ -149,6 +190,8 @@
       item.country,
       item.service,
       item.forWhom,
+      item.game,
+      ...(item.system || []),
       ...(item.tags || []),
     ].filter(Boolean).join(" "));
   }
@@ -168,6 +211,15 @@
 
     elements.tvFilters.forEach((field) => { field.hidden = collection !== "tv"; });
     elements.movieFilters.forEach((field) => { field.hidden = collection !== "movies"; });
+    elements.ttrpgFilters.forEach((field) => { field.hidden = collection !== "ttrpgs"; });
+
+    // "Most recently finished" and "Release date" need dates this shelf does not have.
+    const dated = config.dated !== false;
+    elements.datedSortOptions.forEach((option) => { option.hidden = !dated; option.disabled = !dated; });
+    if (!dated && elements.datedSortOptions.some((option) => option.value === state.sort))
+      state.sort = config.defaultSort;
+
+    elements.search.placeholder = config.searchHint;
 
     const validViews = new Set(config.views.map(([value]) => value));
     if (!validViews.has(state.view)) state.view = "all";
@@ -209,11 +261,18 @@
       fillSelect(elements.viewer, values(items, "forWhom"), state.viewer, "Anyone");
       fillSelect(elements.status, values(items, "status"), state.status, "Any status");
       fillSelect(elements.service, values(items, "service"), state.service, "Any service");
-    } else {
+    } else if (collection === "movies") {
       const decades = [...new Set(items.map((item) => decadeOf(item.release)).filter(Boolean))]
         .sort((a, b) => b.localeCompare(a));
       fillSelect(elements.decade, decades, state.decade, "Any decade");
       fillSelect(elements.country, values(items, "country"), state.country, "Any country");
+    } else {
+      const players = [...new Set(items.flatMap((item) => item.players || []))]
+        .sort((a, b) => collator.compare(a, b));
+      fillSelect(elements.game, values(items, "game"), state.game, "Any game");
+      fillSelect(elements.bookStatus, values(items, "status"), state.status, "Any status");
+      fillSelect(elements.players, players, state.players, "Any group size");
+      elements.physical.value = state.physical;
     }
 
     const tagCounts = new Map();
@@ -245,6 +304,17 @@
 
   function matchesView(item) {
     if (state.view === "watching") return item.status === "In Progress";
+    if (state.view === "reading") return item.status === "In Progress";
+    if (state.view === "next") return item.status === "Next";
+    if (state.view === "solo") return (item.players || []).includes("Solo");
+    if (state.view === "duo") return (item.players || []).includes("Duo");
+    if (state.view === "group") return (item.players || []).includes("Group");
+    if (state.view === "cthulhu") return item.game === "Call of Cthulhu";
+    if (state.view === "dnd") return item.game === "D&D";
+    // Covers both Cyberpunk 2020 and Cyberpunk RED.
+    if (state.view === "cyberpunk") return text(item.game).startsWith("Cyberpunk");
+    if (state.view === "backed") return (item.tags || []).includes("backed");
+    if (state.view === "played") return item.played === true;
     if (state.view === "top") return item.rating != null && item.rating >= 4.5;
     if (state.view === "anime") return (item.tags || []).includes("anime");
     if (state.view === "documentary") return (item.tags || []).includes("documentary");
@@ -263,9 +333,15 @@
       if (state.viewer && item.forWhom !== state.viewer) return false;
       if (state.status && item.status !== state.status) return false;
       if (state.service && item.service !== state.service) return false;
-    } else {
+    } else if (collection === "movies") {
       if (state.decade && decadeOf(item.release) !== state.decade) return false;
       if (state.country && item.country !== state.country) return false;
+    } else {
+      if (state.game && item.game !== state.game) return false;
+      if (state.status && item.status !== state.status) return false;
+      if (state.players && !(item.players || []).includes(state.players)) return false;
+      if (state.physical === "physical" && !item.physical) return false;
+      if (state.physical === "played" && !item.played) return false;
     }
 
     return true;
@@ -335,7 +411,7 @@
       image.decoding = "async";
       if (cardIndex === 0) image.fetchPriority = "high";
       image.width = 340;
-      image.height = 510;
+      image.height = collection === "ttrpgs" ? 476 : 510;   // book frames are 1:1.4, posters 2:3
       image.addEventListener("error", () => image.classList.add("is-missing"), { once: true });
       frame.append(image);
     }
@@ -385,24 +461,35 @@
       elements.detailCover.hidden = true;
     }
 
-    const fields = collection === "tv"
-      ? [
-          field("Status", item.status || "Done"),
-          field("For", item.forWhom),
-          field("Service", item.service),
-          field("Released", formatDate(item.release)),
-          field("Started", item.started ? formatDate(item.started) : ""),
-          field("Finished", item.finished ? formatDate(item.finished) : ""),
-          field("Season", item.season),
-        ]
-      : [
-          field("Director", item.director),
-          field("Released", text(item.release)),
-          field("Country", item.country),
-          field("Runtime", item.runtime),
-          field("Finished", item.finished ? formatDate(item.finished) : ""),
-          field("Status", item.status || "Done"),
-        ];
+    const fieldsByCollection = {
+      tv: () => [
+        field("Status", item.status || "Done"),
+        field("For", item.forWhom),
+        field("Service", item.service),
+        field("Released", formatDate(item.release)),
+        field("Started", item.started ? formatDate(item.started) : ""),
+        field("Finished", item.finished ? formatDate(item.finished) : ""),
+        field("Season", item.season),
+      ],
+      movies: () => [
+        field("Director", item.director),
+        field("Released", text(item.release)),
+        field("Country", item.country),
+        field("Runtime", item.runtime),
+        field("Finished", item.finished ? formatDate(item.finished) : ""),
+        field("Status", item.status || "Done"),
+      ],
+      ttrpgs: () => [
+        field("Status", item.status || "Not started"),
+        field("Game", item.game),
+        field("System", (item.system || []).join(", ")),
+        field("Players", (item.players || []).join(", ")),
+        field("Format", item.physical ? "Print" : "PDF"),
+        field("Played", item.played ? "Yes" : ""),
+      ],
+    };
+
+    const fields = fieldsByCollection[collection]();
 
     elements.detailFields.replaceChildren(...fields.filter(Boolean));
 
@@ -452,8 +539,11 @@
       Boolean(state.service),
       Boolean(state.decade),
       Boolean(state.country),
+      Boolean(state.game),
+      Boolean(state.players),
+      Boolean(state.physical),
       Boolean(state.tag),
-      state.sort !== "recent",
+      state.sort !== config.defaultSort,
     ].filter(Boolean).length;
 
     elements.filterToggleCount.textContent = `${activeFilters} active`;
@@ -470,8 +560,11 @@
     if (state.service) next.set("service", state.service);
     if (state.decade) next.set("decade", state.decade);
     if (state.country) next.set("country", state.country);
+    if (state.game) next.set("game", state.game);
+    if (state.players) next.set("players", state.players);
+    if (state.physical) next.set("format", state.physical);
     if (state.tag) next.set("tag", state.tag);
-    if (state.sort !== "recent") next.set("sort", state.sort);
+    if (state.sort !== config.defaultSort) next.set("sort", state.sort);
     history.replaceState(null, "", `${location.pathname}?${next.toString()}`);
   }
 
@@ -485,8 +578,11 @@
       service: "",
       decade: "",
       country: "",
+      game: "",
+      players: "",
+      physical: "",
       tag: "",
-      sort: "recent",
+      sort: config.defaultSort,
     });
 
     elements.search.value = "";
@@ -496,7 +592,11 @@
     elements.service.value = "";
     elements.decade.value = "";
     elements.country.value = "";
-    elements.sort.value = "recent";
+    elements.game.value = "";
+    elements.bookStatus.value = "";
+    elements.players.value = "";
+    elements.physical.value = "";
+    elements.sort.value = config.defaultSort;
     updateResults();
   }
 
@@ -547,6 +647,26 @@
 
     elements.country.addEventListener("change", () => {
       state.country = elements.country.value;
+      updateResults();
+    });
+
+    elements.game.addEventListener("change", () => {
+      state.game = elements.game.value;
+      updateResults();
+    });
+
+    elements.bookStatus.addEventListener("change", () => {
+      state.status = elements.bookStatus.value;
+      updateResults();
+    });
+
+    elements.players.addEventListener("change", () => {
+      state.players = elements.players.value;
+      updateResults();
+    });
+
+    elements.physical.addEventListener("change", () => {
+      state.physical = elements.physical.value;
       updateResults();
     });
 

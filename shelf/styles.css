@@ -27,6 +27,33 @@ body[data-collection="movies"] {
   --focus: #baf4c7;
 }
 
+body[data-collection="ttrpgs"] {
+  --background: #161018;
+  --surface: #1e1722;
+  --surface-raised: #281f2d;
+  --surface-soft: #221a27;
+  --text: #f4e9f7;
+  --muted: #b89fbe;
+  --line: #3d2f44;
+  --accent: #d173e8;
+  --accent-ink: #2b0c33;
+  --focus: #edbdf7;
+}
+
+/* Reserved for the fiction shelf; no switch entry until there is data behind it. */
+body[data-collection="books"] {
+  --background: #0f1319;
+  --surface: #161b24;
+  --surface-raised: #1e2530;
+  --surface-soft: #191f29;
+  --text: #e9eef7;
+  --muted: #9fabbe;
+  --line: #2f3847;
+  --accent: #6f9ff0;
+  --accent-ink: #06162e;
+  --focus: #b9d2fb;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -406,6 +433,17 @@ h1::after {
   opacity: 0;
 }
 
+/* RPG books are not poster-shaped: covers run from 1.19 to 1.41, and a couple of
+   dozen are landscape. `cover` would crop the sides off most of them and destroy
+   the landscape ones, so this shelf letterboxes instead. */
+body[data-collection="ttrpgs"] .poster-frame {
+  aspect-ratio: 1 / 1.4;
+}
+
+body[data-collection="ttrpgs"] .poster-frame img {
+  object-fit: contain;
+}
+
 .poster-frame::after {
   content: "";
   position: absolute;
@@ -426,7 +464,8 @@ h1::after {
 .poster-copy {
   display: grid;
   gap: 0.28rem;
-  padding-top: 0.62rem;
+  /* The cover stays full-bleed; only the text is inset off the card edge. */
+  padding: 0.62rem 0.7rem 0.7rem;
 }
 
 .poster-title {

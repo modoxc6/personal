@@ -20,6 +20,7 @@
         <nav class="collection-switch" aria-label="Choose collection">
           <a href="?collection=tv" data-collection-link="tv">Television</a>
           <a href="?collection=movies" data-collection-link="movies">Movies</a>
+          <a href="?collection=ttrpgs" data-collection-link="ttrpgs">TTRPGs</a>
         </nav>
       </div>
 
@@ -89,13 +90,43 @@
             </select>
           </label>
 
+          <label class="field" data-ttrpg-filter hidden>
+            <span>Game</span>
+            <select id="filter-game">
+              <option value="">Any game</option>
+            </select>
+          </label>
+
+          <label class="field" data-ttrpg-filter hidden>
+            <span>Reading status</span>
+            <select id="filter-book-status">
+              <option value="">Any status</option>
+            </select>
+          </label>
+
+          <label class="field" data-ttrpg-filter hidden>
+            <span>Players</span>
+            <select id="filter-players">
+              <option value="">Any group size</option>
+            </select>
+          </label>
+
+          <label class="field" data-ttrpg-filter hidden>
+            <span>Format</span>
+            <select id="filter-physical">
+              <option value="">Any format</option>
+              <option value="physical">Own in print</option>
+              <option value="played">Played at the table</option>
+            </select>
+          </label>
+
           <label class="field">
             <span>Sort</span>
             <select id="filter-sort">
-              <option value="recent">Most recently finished</option>
+              <option value="recent" data-dated-only>Most recently finished</option>
               <option value="rating">Highest rated</option>
               <option value="title">Title</option>
-              <option value="release">Release date</option>
+              <option value="release" data-dated-only>Release date</option>
             </select>
           </label>
         </div>

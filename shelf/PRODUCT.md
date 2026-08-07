@@ -21,6 +21,7 @@ The log is authored, not scraped. Every entry is a note Rich wrote by hand in hi
 ## Operating Context
 
 - Source of truth is `D:\Obsidian\Personal\TV and Film\TV Shows\` — one markdown note per season, YAML frontmatter only, plus a `Covers/` folder of one image per note, filename-matched.
+- A third collection, TTRPGs, comes from `D:\Obsidian\Personal\TTRPG\TTRPG Books\` on the same terms: one note per book or supplement, frontmatter only, filename-matched covers extracted from page 1 of each book's PDF. 313 entries, all with covers. Fields are `Cover`, `tags`, `Game`, `System`, `Players` (`Solo`/`Duo`/`Group`), `Status` (`Not started` | `Next` | `In Progress` | `Read`), `Rating`, `Physical`, `Played`. Only 93 of 313 carry a rating and none carry any date, so anything that assumes a watch/read date does not apply to that shelf. Filenames are prefixed with the game line (`Delta Green Archint`, `Cyberpunk 2020 Rockerboy`), which is what makes alphabetical order useful there. That folder has its own `CLAUDE.md` documenting the conventions.
 - Data reaches the page via a build script that reads the frontmatter and writes `shows.json` + copies covers. Rich runs it after adding shows; the published page is static.
 - The page is a sub-route of the existing GitHub Pages site `modoxc6/personal` (`https://modoxc6.github.io/personal/`), whose index is a card hub linking to standalone project pages. Sub-pages do not inherit the hub's visual identity.
 - Rich has an existing publishing pattern: push to `main`, Pages serves it.
