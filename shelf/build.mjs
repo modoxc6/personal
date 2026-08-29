@@ -44,6 +44,10 @@ function parseNote(text) {
   return { fm, body: m[2].trim() };
 }
 
+function description(body) {
+  return body.match(/^> \[!summary\] Description\r?\n>\s*(.+)$/m)?.[1].trim() || null;
+}
+
 const clean = (v) => v.trim().replace(/^["']|["']$/g, '');
 const one = (v) => (Array.isArray(v) ? v[0] : v) || null;   // Status is sometimes a 1-item list
 const list = (v) => (Array.isArray(v) ? v : v ? [v] : []);
@@ -102,6 +106,7 @@ for (const shelf of SHELVES) {
       players: list(fm.Players),
       physical: one(fm.Physical) === 'true',
       played: one(fm.Played) === 'true',
+      synopsis: description(body),
       links: {},
     });
 
