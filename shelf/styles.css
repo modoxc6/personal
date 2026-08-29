@@ -646,12 +646,8 @@ body[data-collection="ttrpgs"] .poster-frame img {
 }
 
 .detail-synopsis {
-  display: -webkit-box;
   margin-bottom: 0;
-  overflow: hidden;
   color: var(--muted);
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 5;
 }
 
 .detail-tags {
