@@ -822,7 +822,11 @@
     elements.resultCount.textContent = "Loading titles...";
 
     try {
-      const response = await fetch(config.file);
+      // Pages serves everything with max-age=600, so a shelf left open would
+      // read ten-minute-old JSON after a rebuild. Revalidate instead: the ETag
+      // makes it a 304 in the common case, so it costs a round trip, not a
+      // download.
+      const response = await fetch(config.file, { cache: "no-cache" });
       if (!response.ok) throw new Error(`The server returned ${response.status}.`);
       const data = await response.json();
       if (!Array.isArray(data)) throw new Error("The collection data is not an array.");

@@ -2,6 +2,7 @@
 // JSON, and resizes every cover into covers/.  Run after adding entries:  node build.mjs
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { join, parse } from 'node:path';
 
 const VAULT = 'D:/Obsidian/Personal';
@@ -142,3 +143,22 @@ for (const shelf of SHELVES) {
   writeFileSync(join(OUT, shelf.out), JSON.stringify(items));
   console.log(`${shelf.dir}: ${items.length} -> ${shelf.out}`);
 }
+
+// GitHub Pages serves every file with max-age=600, so a browser that has the
+// shelf open keeps the old app.js for ten minutes after a deploy. That is not
+// cosmetic: an app.js predating a new collection has no entry for it, falls
+// back to television and rewrites the URL, so a shared link lands on the wrong
+// shelf. Stamping the asset URLs with a hash of their contents makes each
+// deploy request a URL the browser has never seen.
+const stamp = (file) => createHash('sha1').update(readFileSync(join(OUT, file))).digest('hex').slice(0, 8);
+const version = createHash('sha1')
+  .update(stamp('app.js') + stamp('styles.css'))
+  .digest('hex')
+  .slice(0, 8);
+
+const indexPath = join(OUT, 'index.html');
+const stamped = readFileSync(indexPath, 'utf8')
+  .replace(/(href="styles\.css)(\?v=[0-9a-f]+)?"/, `$1?v=${version}"`)
+  .replace(/(src="app\.js)(\?v=[0-9a-f]+)?"/, `$1?v=${version}"`);
+writeFileSync(indexPath, stamped);
+console.log(`assets stamped v=${version}`);
