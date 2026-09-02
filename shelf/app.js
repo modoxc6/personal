@@ -48,11 +48,13 @@
         ["reading", "Reading now"],
         ["recent", "Most recent"],
         ["top", "Top rated"],
-        ["comics", "Comics"],
-        ["manga", "Manga"],
         ["owned", "Owned"],
         ["unread", "Unread"],
       ],
+      // A second chip group, independent of the view above: pick any
+      // combination of these and it narrows whatever the view already chose.
+      // Labelled explicitly -- the plural of Manga is Manga.
+      types: [["Book", "Books"], ["Comic", "Comics"], ["Manga", "Manga"]],
     },
     ttrpgs: {
       file: "ttrpgs.json",
@@ -95,7 +97,8 @@
     game: params.get("game") || "",
     players: params.get("players") || "",
     physical: params.get("format") || "",
-    type: params.get("type") || "",
+    // Multi-select: "Comic,Manga" means either, empty means no type filter.
+    types: (params.get("type") || "").split(",").filter(Boolean),
     bookFormat: params.get("binding") || "",
     publisher: params.get("publisher") || "",
     tag: params.get("tag") || "",
@@ -121,7 +124,7 @@
     bookStatus: document.querySelector("#filter-book-status"),
     players: document.querySelector("#filter-players"),
     physical: document.querySelector("#filter-physical"),
-    type: document.querySelector("#filter-type"),
+    typeChips: document.querySelector("#type-chips"),
     bookStatusMain: document.querySelector("#filter-reading-status"),
     bookFormat: document.querySelector("#filter-binding"),
     publisher: document.querySelector("#filter-publisher"),
@@ -274,9 +277,34 @@
       return button;
     }));
 
+    renderTypeChips();
+
     elements.search.value = state.query;
     elements.rating.value = state.rating;
     elements.sort.value = state.sort;
+  }
+
+  // The type group is its own filter, not a view: "All" is the empty selection
+  // rather than a value, and every other chip toggles independently so Comics
+  // and Manga can both be on at once.
+  function renderTypeChips() {
+    const types = config.types;
+    elements.typeChips.hidden = !types;
+    if (!types) return;
+
+    const chip = (value, label, pressed) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.dataset.type = value;
+      button.textContent = label;
+      button.setAttribute("aria-pressed", String(pressed));
+      return button;
+    };
+
+    elements.typeChips.replaceChildren(
+      chip("", "All", state.types.length === 0),
+      ...types.map(([value, label]) => chip(value, label, state.types.includes(value))),
+    );
   }
 
   function fillSelect(select, options, current, firstLabel) {
@@ -310,7 +338,6 @@
     } else if (collection === "books") {
       const decades = [...new Set(items.map((item) => decadeOf(item.release)).filter(Boolean))]
         .sort((a, b) => b.localeCompare(a));
-      fillSelect(elements.type, values(items, "type"), state.type, "Any type");
       fillSelect(elements.bookStatusMain, values(items, "status"), state.status, "Any status");
       fillSelect(elements.bookFormat, values(items, "format"), state.bookFormat, "Any format");
       fillSelect(elements.decade, decades, state.decade, "Any decade");
@@ -391,7 +418,7 @@
       if (state.decade && decadeOf(item.release) !== state.decade) return false;
       if (state.country && item.country !== state.country) return false;
     } else if (collection === "books") {
-      if (state.type && item.type !== state.type) return false;
+      if (state.types.length && !state.types.includes(item.type)) return false;
       if (state.status && item.status !== state.status) return false;
       if (state.bookFormat && item.format !== state.bookFormat) return false;
       if (state.decade && decadeOf(item.release) !== state.decade) return false;
@@ -615,7 +642,7 @@
       Boolean(state.game),
       Boolean(state.players),
       Boolean(state.physical),
-      Boolean(state.type),
+      state.types.length > 0,
       Boolean(state.bookFormat),
       Boolean(state.publisher),
       Boolean(state.tag),
@@ -639,7 +666,7 @@
     if (state.game) next.set("game", state.game);
     if (state.players) next.set("players", state.players);
     if (state.physical) next.set("format", state.physical);
-    if (state.type) next.set("type", state.type);
+    if (state.types.length) next.set("type", state.types.join(","));
     if (state.bookFormat) next.set("binding", state.bookFormat);
     if (state.publisher) next.set("publisher", state.publisher);
     if (state.tag) next.set("tag", state.tag);
@@ -678,7 +705,7 @@
     elements.bookStatus.value = "";
     elements.players.value = "";
     elements.physical.value = "";
-    elements.type.value = "";
+    renderTypeChips();
     elements.bookStatusMain.value = "";
     elements.bookFormat.value = "";
     elements.publisher.value = "";
@@ -736,8 +763,15 @@
       updateResults();
     });
 
-    elements.type.addEventListener("change", () => {
-      state.type = elements.type.value;
+    elements.typeChips.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-type]");
+      if (!button) return;
+      const value = button.dataset.type;
+      // The All chip clears rather than selecting; the others toggle.
+      if (!value) state.types = [];
+      else if (state.types.includes(value)) state.types = state.types.filter((t) => t !== value);
+      else state.types = [...state.types, value];
+      renderTypeChips();
       updateResults();
     });
 

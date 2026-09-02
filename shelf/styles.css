@@ -228,13 +228,29 @@ h1::after {
   transform: skewX(7deg);
 }
 
-.suggested-views {
+/* Views on the left, the type group pushed to the right. They are separate
+   filters, so the gap between them is the point -- on a narrow screen the row
+   wraps and the type group falls below rather than interleaving with views. */
+.view-row {
+  display: flex;
+  gap: 0.75rem 1.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.view-row .type-chips {
+  margin-left: auto;
+}
+
+.suggested-views,
+.type-chips {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .suggested-views button,
+.type-chips button,
 .tag-button {
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -242,17 +258,20 @@ h1::after {
   color: var(--muted);
 }
 
-.suggested-views button {
+.suggested-views button,
+.type-chips button {
   padding: 0.55rem 0.85rem;
 }
 
 .suggested-views button:hover,
+.type-chips button:hover,
 .tag-button:hover {
   border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
   color: var(--text);
 }
 
 .suggested-views button[aria-pressed="true"],
+.type-chips button[aria-pressed="true"],
 .tag-button[aria-pressed="true"] {
   border-color: var(--accent);
   background: var(--accent);

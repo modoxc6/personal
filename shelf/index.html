@@ -7,8 +7,8 @@
   <meta name="description" content="Rich's personal movie and television log.">
   <title>The Shelf</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="styles.css?v=bc556816">
-  <script src="app.js?v=bc556816" defer></script>
+  <link rel="stylesheet" href="styles.css?v=f3f90a3e">
+  <script src="app.js?v=f3f90a3e" defer></script>
 </head>
 <body data-collection="tv">
   <a class="skip-link" href="#poster-grid">Skip to titles</a>
@@ -29,7 +29,12 @@
         <h1 id="page-title" data-wordmark="Television">Television</h1>
       </div>
 
-      <nav class="suggested-views" id="suggested-views" aria-label="Suggested views"></nav>
+      <div class="view-row">
+        <nav class="suggested-views" id="suggested-views" aria-label="Suggested views"></nav>
+        <!-- Books only: an independent multi-select that combines with the view
+             on the left, so "Top rated" + "Comics" means top-rated comics. -->
+        <nav class="type-chips" id="type-chips" aria-label="Filter by type" hidden></nav>
+      </div>
     </header>
 
     <button class="filter-toggle" id="filter-toggle" type="button" aria-expanded="false" aria-controls="filter-panel">
@@ -82,13 +87,6 @@
             <span>Release decade</span>
             <select id="filter-decade">
               <option value="">Any decade</option>
-            </select>
-          </label>
-
-          <label class="field" data-book-filter hidden>
-            <span>Type</span>
-            <select id="filter-type">
-              <option value="">Any type</option>
             </select>
           </label>
 
