@@ -116,8 +116,10 @@ for (const shelf of SHELVES) {
       volume: one(fm.Volume),
       owned: one(fm.Owned) === 'true',
       added: one(fm.Added),
-      // The body is the StoryGraph review where one was written, plain prose.
-      synopsis: body || null,
+      // The body holds both: a Description callout, and below it the StoryGraph
+      // review where one was written. Only the blurb goes to the shelf -- the
+      // review stays a private note.
+      synopsis: description(body),
       links: { 'Open Library': one(fm.OpenLibrary) },
     });
     else Object.assign(entry, {
