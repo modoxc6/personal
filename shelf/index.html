@@ -20,6 +20,7 @@
         <nav class="collection-switch" aria-label="Choose collection">
           <a href="?collection=tv" data-collection-link="tv">Television</a>
           <a href="?collection=movies" data-collection-link="movies">Movies</a>
+          <a href="?collection=books" data-collection-link="books">Books</a>
           <a href="?collection=ttrpgs" data-collection-link="ttrpgs">TTRPGs</a>
         </nav>
       </div>
@@ -76,10 +77,39 @@
             </select>
           </label>
 
-          <label class="field" data-movie-filter hidden>
+          <!-- Shared: movies filter by release decade, books by publication decade. -->
+          <label class="field" data-movie-filter data-book-filter hidden>
             <span>Release decade</span>
             <select id="filter-decade">
               <option value="">Any decade</option>
+            </select>
+          </label>
+
+          <label class="field" data-book-filter hidden>
+            <span>Type</span>
+            <select id="filter-type">
+              <option value="">Any type</option>
+            </select>
+          </label>
+
+          <label class="field" data-book-filter hidden>
+            <span>Status</span>
+            <select id="filter-reading-status">
+              <option value="">Any status</option>
+            </select>
+          </label>
+
+          <label class="field" data-book-filter hidden>
+            <span>Format</span>
+            <select id="filter-binding">
+              <option value="">Any format</option>
+            </select>
+          </label>
+
+          <label class="field" data-book-filter hidden>
+            <span>Publisher</span>
+            <select id="filter-publisher">
+              <option value="">Any publisher</option>
             </select>
           </label>
 

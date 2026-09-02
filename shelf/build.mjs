@@ -13,6 +13,7 @@ const SHELVES = [
   { kind: 'tv',     dir: 'TV and Film/TV Shows', out: 'shows.json',  covers: 'covers/tv' },
   { kind: 'movies', dir: 'TV and Film/Movies',   out: 'movies.json', covers: 'covers/film' },
   { kind: 'ttrpgs', dir: 'TTRPG/TTRPG Books',    out: 'ttrpgs.json', covers: 'covers/ttrpg' },
+  { kind: 'books',  dir: 'Books/Books',          out: 'books.json',  covers: 'covers/book' },
 ];
 
 // Every folder carries an index note named after itself; some also carry a CLAUDE.md
@@ -79,7 +80,10 @@ for (const shelf of SHELVES) {
     const entry = {
       title: parse(file).name,
       cover: cover(shelf, file, one(fm.Cover)?.replace(/^\[\[|\]\]$/g, '')),
-      release: one(fm.Release),
+      // Books record the year as Published; everything else calls it Release.
+      // Same meaning, so it lands in the same field and the decade filter and
+      // release sort work without a second code path.
+      release: one(fm.Release) || (shelf.kind === 'books' ? one(fm.Published) : null),
       finished: one(fm.Finished),
       rating: num(fm.Rating),
       status: one(fm.Status) || (shelf.kind === 'ttrpgs' ? 'Not started' : 'Done'),
@@ -99,6 +103,21 @@ for (const shelf of SHELVES) {
       runtime: one(fm.Runtime),
       synopsis: body || null,
       links: { Letterboxd: one(fm.Letterboxd), TMDB: one(fm.TMDB) },
+    });
+    else if (shelf.kind === 'books') Object.assign(entry, {
+      author: one(fm.Author),
+      translator: one(fm.Translator),
+      publisher: one(fm.Publisher),
+      pages: num(fm.Pages),
+      format: one(fm.Format),
+      type: one(fm.Type),
+      series: one(fm.Series),
+      volume: one(fm.Volume),
+      owned: one(fm.Owned) === 'true',
+      added: one(fm.Added),
+      // The body is the StoryGraph review where one was written, plain prose.
+      synopsis: body || null,
+      links: { 'Open Library': one(fm.OpenLibrary) },
     });
     else Object.assign(entry, {
       game: one(fm.Game),

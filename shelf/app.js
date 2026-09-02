@@ -36,6 +36,24 @@
         ["horror", "Horror"],
       ],
     },
+    books: {
+      file: "books.json",
+      title: "Books",
+      noun: "books",
+      dialogLabel: "Reading log entry",
+      defaultSort: "recent",
+      searchHint: "Title, author or tag",
+      views: [
+        ["all", "All"],
+        ["reading", "Reading now"],
+        ["recent", "Most recent"],
+        ["top", "Top rated"],
+        ["comics", "Comics"],
+        ["manga", "Manga"],
+        ["owned", "Owned"],
+        ["unread", "Unread"],
+      ],
+    },
     ttrpgs: {
       file: "ttrpgs.json",
       title: "TTRPGs",
@@ -77,6 +95,9 @@
     game: params.get("game") || "",
     players: params.get("players") || "",
     physical: params.get("format") || "",
+    type: params.get("type") || "",
+    bookFormat: params.get("binding") || "",
+    publisher: params.get("publisher") || "",
     tag: params.get("tag") || "",
     sort: params.get("sort") || config.defaultSort,
   };
@@ -100,10 +121,15 @@
     bookStatus: document.querySelector("#filter-book-status"),
     players: document.querySelector("#filter-players"),
     physical: document.querySelector("#filter-physical"),
+    type: document.querySelector("#filter-type"),
+    bookStatusMain: document.querySelector("#filter-reading-status"),
+    bookFormat: document.querySelector("#filter-binding"),
+    publisher: document.querySelector("#filter-publisher"),
     sort: document.querySelector("#filter-sort"),
     tvFilters: [...document.querySelectorAll("[data-tv-filter]")],
     movieFilters: [...document.querySelectorAll("[data-movie-filter]")],
     ttrpgFilters: [...document.querySelectorAll("[data-ttrpg-filter]")],
+    bookFilters: [...document.querySelectorAll("[data-book-filter]")],
     datedSortOptions: [...document.querySelectorAll("#filter-sort [data-dated-only]")],
     tagList: document.querySelector("#tag-list"),
     showAllTags: document.querySelector("#show-all-tags"),
@@ -180,6 +206,9 @@
     if (item.status === "In Progress") return "In progress";
     if (collection === "ttrpgs") return item.status || "Not started";
     if (item.status === "Abandoned") return "Abandoned";
+    // Two thirds of the books carry no finish date, so "Finished" unqualified
+    // is the honest label rather than a year that isn't recorded.
+    if (collection === "books" && item.status === "Not Started") return "Not started";
     return item.finished ? `Finished ${yearOf(item.finished)}` : "Finished";
   }
 
@@ -191,6 +220,9 @@
       item.service,
       item.forWhom,
       item.game,
+      item.author,
+      item.series,
+      item.publisher,
       ...(item.system || []),
       ...(item.tags || []),
     ].filter(Boolean).join(" "));
@@ -209,9 +241,18 @@
       else link.removeAttribute("aria-current");
     });
 
-    elements.tvFilters.forEach((field) => { field.hidden = collection !== "tv"; });
-    elements.movieFilters.forEach((field) => { field.hidden = collection !== "movies"; });
-    elements.ttrpgFilters.forEach((field) => { field.hidden = collection !== "ttrpgs"; });
+    // A field can belong to more than one shelf -- decade is both a movie and a
+    // book filter -- so hide everything and then reveal this shelf's. Setting
+    // `hidden = collection !== x` per list would let the last list win and hide
+    // a shared field on the shelf that wanted it.
+    const filtersByCollection = {
+      tv: elements.tvFilters,
+      movies: elements.movieFilters,
+      ttrpgs: elements.ttrpgFilters,
+      books: elements.bookFilters,
+    };
+    Object.values(filtersByCollection).flat().forEach((field) => { field.hidden = true; });
+    (filtersByCollection[collection] || []).forEach((field) => { field.hidden = false; });
 
     // "Most recently finished" and "Release date" need dates this shelf does not have.
     const dated = config.dated !== false;
@@ -266,6 +307,14 @@
         .sort((a, b) => b.localeCompare(a));
       fillSelect(elements.decade, decades, state.decade, "Any decade");
       fillSelect(elements.country, values(items, "country"), state.country, "Any country");
+    } else if (collection === "books") {
+      const decades = [...new Set(items.map((item) => decadeOf(item.release)).filter(Boolean))]
+        .sort((a, b) => b.localeCompare(a));
+      fillSelect(elements.type, values(items, "type"), state.type, "Any type");
+      fillSelect(elements.bookStatusMain, values(items, "status"), state.status, "Any status");
+      fillSelect(elements.bookFormat, values(items, "format"), state.bookFormat, "Any format");
+      fillSelect(elements.decade, decades, state.decade, "Any decade");
+      fillSelect(elements.publisher, values(items, "publisher"), state.publisher, "Any publisher");
     } else {
       const players = [...new Set(items.flatMap((item) => item.players || []))]
         .sort((a, b) => collator.compare(a, b));
@@ -315,6 +364,11 @@
     if (state.view === "cyberpunk") return text(item.game).startsWith("Cyberpunk");
     if (state.view === "backed") return (item.tags || []).includes("backed");
     if (state.view === "played") return item.played === true;
+    if (state.view === "comics") return item.type === "Comic";
+    if (state.view === "manga") return item.type === "Manga";
+    if (state.view === "owned") return item.owned === true;
+    // Anything not finished: the pile, whether bought and unopened or just listed.
+    if (state.view === "unread") return item.status === "Not Started";
     if (state.view === "top") return item.rating != null && item.rating >= 4.5;
     if (state.view === "anime") return (item.tags || []).includes("anime");
     if (state.view === "documentary") return (item.tags || []).includes("documentary");
@@ -336,6 +390,12 @@
     } else if (collection === "movies") {
       if (state.decade && decadeOf(item.release) !== state.decade) return false;
       if (state.country && item.country !== state.country) return false;
+    } else if (collection === "books") {
+      if (state.type && item.type !== state.type) return false;
+      if (state.status && item.status !== state.status) return false;
+      if (state.bookFormat && item.format !== state.bookFormat) return false;
+      if (state.decade && decadeOf(item.release) !== state.decade) return false;
+      if (state.publisher && item.publisher !== state.publisher) return false;
     } else {
       if (state.game && item.game !== state.game) return false;
       if (state.status && item.status !== state.status) return false;
@@ -479,6 +539,19 @@
         field("Finished", item.finished ? formatDate(item.finished) : ""),
         field("Status", item.status || "Done"),
       ],
+      books: () => [
+        field("Author", item.author),
+        field("Translator", item.translator),
+        field("Series", item.series ? `${item.series}${item.volume ? ` ${item.volume}` : ""}` : ""),
+        field("Type", item.type),
+        field("Published", text(item.release)),
+        field("Publisher", item.publisher),
+        field("Pages", item.pages ? String(item.pages) : ""),
+        field("Format", item.format),
+        field("Owned", item.owned ? "Yes" : ""),
+        field("Status", item.status || "Done"),
+        field("Finished", item.finished ? formatDate(item.finished) : ""),
+      ],
       ttrpgs: () => [
         field("Status", item.status || "Not started"),
         field("Game", item.game),
@@ -542,6 +615,9 @@
       Boolean(state.game),
       Boolean(state.players),
       Boolean(state.physical),
+      Boolean(state.type),
+      Boolean(state.bookFormat),
+      Boolean(state.publisher),
       Boolean(state.tag),
       state.sort !== config.defaultSort,
     ].filter(Boolean).length;
@@ -563,6 +639,9 @@
     if (state.game) next.set("game", state.game);
     if (state.players) next.set("players", state.players);
     if (state.physical) next.set("format", state.physical);
+    if (state.type) next.set("type", state.type);
+    if (state.bookFormat) next.set("binding", state.bookFormat);
+    if (state.publisher) next.set("publisher", state.publisher);
     if (state.tag) next.set("tag", state.tag);
     if (state.sort !== config.defaultSort) next.set("sort", state.sort);
     history.replaceState(null, "", `${location.pathname}?${next.toString()}`);
@@ -581,6 +660,9 @@
       game: "",
       players: "",
       physical: "",
+      type: "",
+      bookFormat: "",
+      publisher: "",
       tag: "",
       sort: config.defaultSort,
     });
@@ -596,6 +678,10 @@
     elements.bookStatus.value = "";
     elements.players.value = "";
     elements.physical.value = "";
+    elements.type.value = "";
+    elements.bookStatusMain.value = "";
+    elements.bookFormat.value = "";
+    elements.publisher.value = "";
     elements.sort.value = config.defaultSort;
     updateResults();
   }
@@ -647,6 +733,28 @@
 
     elements.country.addEventListener("change", () => {
       state.country = elements.country.value;
+      updateResults();
+    });
+
+    elements.type.addEventListener("change", () => {
+      state.type = elements.type.value;
+      updateResults();
+    });
+
+    // Books keep their status in the same state slot the other shelves use, so
+    // only one of the two status selects is ever visible at a time.
+    elements.bookStatusMain.addEventListener("change", () => {
+      state.status = elements.bookStatusMain.value;
+      updateResults();
+    });
+
+    elements.bookFormat.addEventListener("change", () => {
+      state.bookFormat = elements.bookFormat.value;
+      updateResults();
+    });
+
+    elements.publisher.addEventListener("change", () => {
+      state.publisher = elements.publisher.value;
       updateResults();
     });
 
