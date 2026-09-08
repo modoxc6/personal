@@ -150,8 +150,9 @@
 
   .fields {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
-    gap: 14px 20px;
+    /* six fields, held to an even 3x2 so none is orphaned on its own row */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px 24px;
     border-top: 1px solid var(--rule-soft);
     padding-top: 16px;
   }
@@ -353,6 +354,7 @@
 
   @media (max-width: 600px) {
     body { font-size: 16px; padding: 22px 15px 56px; }
+    .fields { grid-template-columns: repeat(2, 1fr); }
     .verdict { grid-template-columns: 1fr; padding: 22px 20px 56px; }
     .stamp { right: 14px; }
     ol.recs > li { grid-template-columns: 32px 1fr; gap: 4px 12px; }
