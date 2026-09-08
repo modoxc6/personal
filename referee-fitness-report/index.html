@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A Travellers Aid Society fitness report grading Telboy's running of Secrets of the Ancients, Chapter 1.">
+<style>
+  html { color-scheme: light dark; }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>Telboy's Fitness Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+  /* ---- Dark-first token set. Bare :root is the primary (dark) palette;
+         the light palette is redefined consistently in both guarded blocks. ---- */
+  :root {
+    --ground:    #0c1320;
+    --panel:     #131c2b;
+    --panel-2:   #1a2434;
+    --panel-3:   #202b3d;
+    --rule:      #2b3647;
+    --rule-soft: #1f2939;
+    --ink:       #e9e5db;
+    --ink-mid:   #b3bcca;
+    --ink-dim:   #8894a5;
+    --red:       #d8483a;
+    --red-soft:  #3a1a19;
+    --gold:      #dca94a;
+    --gold-soft: #33280f;
+    --cyan:      #74b6c7;
+    --cyan-soft: #102b33;
+    --stamp:     #d8483a;
+    --shadow:    rgba(0,0,0,.45);
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --ground:    #e9e6de;
+      --panel:     #f7f5ef;
+      --panel-2:   #efece3;
+      --panel-3:   #e3dfd3;
+      --rule:      #c9c3b4;
+      --rule-soft: #dcd7c9;
+      --ink:       #18212e;
+      --ink-mid:   #4a5462;
+      --ink-dim:   #67707e;
+      --red:       #a12e23;
+      --red-soft:  #f3e2df;
+      --gold:      #7d5a10;
+      --gold-soft: #f2ead4;
+      --cyan:      #235f70;
+      --cyan-soft: #dfebee;
+      --stamp:     #a12e23;
+      --shadow:    rgba(40,34,20,.16);
+    }
+  }
+
+  :root[data-theme="light"] {
+    --ground:    #e9e6de;
+    --panel:     #f7f5ef;
+    --panel-2:   #efece3;
+    --panel-3:   #e3dfd3;
+    --rule:      #c9c3b4;
+    --rule-soft: #dcd7c9;
+    --ink:       #18212e;
+    --ink-mid:   #4a5462;
+    --ink-dim:   #67707e;
+    --red:       #a12e23;
+    --red-soft:  #f3e2df;
+    --gold:      #7d5a10;
+    --gold-soft: #f2ead4;
+    --cyan:      #235f70;
+    --cyan-soft: #dfebee;
+    --stamp:     #a12e23;
+    --shadow:    rgba(40,34,20,.16);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Newsreader", Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    line-height: 1.6;
+    padding: 32px 20px 72px;
+  }
+
+  .sheet {
+    max-width: 940px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  /* ---- shared label type ---- */
+  .lbl {
+    font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    font-size: 12px;
+    color: var(--ink-dim);
+    line-height: 1.3;
+  }
+  .mono {
+    font-family: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- masthead ---- */
+  header {
+    border-top: 3px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 14px 0 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .crest {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .org { letter-spacing: .3em; color: var(--red); }
+  h1 {
+    font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-size: clamp(34px, 7vw, 58px);
+    line-height: .95;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .subhead {
+    font-style: italic;
+    color: var(--ink-mid);
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  .fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+    gap: 14px 20px;
+    border-top: 1px solid var(--rule-soft);
+    padding-top: 16px;
+  }
+  .field { display: flex; flex-direction: column; gap: 3px; }
+  .field .val { font-size: 14px; font-weight: 700; }
+
+  /* ---- verdict ---- */
+  .verdict {
+    position: relative;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--red);
+    padding: 26px 28px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px 30px;
+    align-items: center;
+    box-shadow: 0 1px 0 var(--shadow);
+  }
+  .bigmark {
+    font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+    font-weight: 700;
+    font-size: clamp(76px, 15vw, 128px);
+    line-height: .8;
+    color: var(--gold);
+    letter-spacing: -.02em;
+  }
+  .verdict-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .verdict-body p { margin: 0; }
+  .effect {
+    font-size: 13px;
+    color: var(--cyan);
+    letter-spacing: .04em;
+  }
+  .stamp {
+    position: absolute;
+    right: 18px;
+    bottom: 14px;
+    transform: rotate(-7deg);
+    border: 2.5px solid var(--stamp);
+    color: var(--stamp);
+    padding: 5px 12px 4px;
+    font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .2em;
+    font-size: 13px;
+    opacity: .92;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  /* ---- section headings ---- */
+  section { display: flex; flex-direction: column; gap: 16px; }
+  .sec-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 7px;
+  }
+  .sec-head h2 {
+    font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: 20px;
+    margin: 0;
+  }
+  .sec-head .lbl { margin-left: auto; }
+
+  /* ---- grade table ---- */
+  .tablewrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 620px; }
+  thead th {
+    text-align: left;
+    font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .13em;
+    font-size: 11px;
+    color: var(--ink-dim);
+    padding: 0 12px 8px 0;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 11px 12px 11px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: baseline;
+    font-size: 15.5px;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.cat { font-weight: 600; white-space: nowrap; }
+  td.skill { font-size: 13px; color: var(--cyan); white-space: nowrap; }
+  td.note { color: var(--ink-mid); font-size: 15px; }
+  .g {
+    font-family: "JetBrains Mono", ui-monospace, Consolas, monospace;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 2px 8px;
+    white-space: nowrap;
+  }
+  .g-a { color: var(--gold);  background: var(--gold-soft); }
+  .g-b { color: var(--cyan);  background: var(--cyan-soft); }
+  .g-c { color: var(--red);   background: var(--red-soft); }
+
+  /* ---- findings ---- */
+  .findings { display: flex; flex-direction: column; gap: 22px; }
+  .finding { display: flex; flex-direction: column; gap: 5px; }
+  .finding h3 {
+    font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    font-size: 16px;
+    margin: 0;
+    color: var(--ink);
+  }
+  .finding p { margin: 0; max-width: 68ch; }
+  .evidence {
+    border-left: 2px solid var(--rule);
+    padding-left: 14px;
+    color: var(--ink-dim);
+    font-size: 14.5px;
+    font-style: italic;
+    max-width: 64ch;
+  }
+  .tag {
+    font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    font-size: 10.5px;
+    padding: 2px 7px;
+    align-self: flex-start;
+  }
+  .tag-good { color: var(--gold); background: var(--gold-soft); }
+  .tag-fix  { color: var(--red);  background: var(--red-soft); }
+
+  /* ---- recommendations: an ordered priority list, highest impact first ---- */
+  ol.recs { list-style: none; counter-reset: r; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; }
+  ol.recs > li {
+    counter-increment: r;
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 4px 16px;
+    align-items: baseline;
+  }
+  ol.recs > li::before {
+    content: counter(r, decimal-leading-zero);
+    font-family: "JetBrains Mono", ui-monospace, Consolas, monospace;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--red);
+    grid-row: span 2;
+  }
+  ol.recs h3 {
+    font-family: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    font-size: 16px;
+    margin: 0;
+  }
+  ol.recs p { margin: 0; max-width: 66ch; color: var(--ink-mid); }
+
+  /* ---- closing ---- */
+  .closing {
+    background: var(--panel-2);
+    border: 1px solid var(--rule);
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .closing p { margin: 0; max-width: 68ch; }
+  .closing p.pull {
+    font-size: 20px;
+    line-height: 1.45;
+    font-weight: 500;
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 14px;
+    display: flex;
+    gap: 12px 28px;
+    flex-wrap: wrap;
+    align-items: baseline;
+  }
+  footer .lbl { font-size: 11px; }
+
+  a { color: var(--cyan); }
+  a:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 16px; padding: 22px 15px 56px; }
+    .verdict { grid-template-columns: 1fr; padding: 22px 20px 56px; }
+    .stamp { right: 14px; }
+    ol.recs > li { grid-template-columns: 32px 1fr; gap: 4px 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header>
+    <div class="crest">
+      <div class="lbl org">Travellers' Aid Society</div>
+      <div class="lbl mono">Form TAS&nbsp;/&nbsp;REF-1 &nbsp;·&nbsp; Filed 196-1105</div>
+    </div>
+    <h1>Referee Fitness Report</h1>
+    <p class="subhead">Assessment of the referee's conduct of <em>Secrets of the Ancients</em>, Chapter&nbsp;1, prepared at his own request. Compiled from the session recordings and the campaign log. Frank by invitation.</p>
+
+    <div class="fields">
+      <div class="field"><span class="lbl">Referee</span><span class="val mono">Telboy</span></div>
+      <div class="field"><span class="lbl">Ruleset</span><span class="val mono">Mongoose Traveller 2e</span></div>
+      <div class="field"><span class="lbl">Period assessed</span><span class="val mono">02 Aug – 06 Sep 2026</span></div>
+      <div class="field"><span class="lbl">Sessions</span><span class="val mono">4</span></div>
+      <div class="field"><span class="lbl">In-fiction span</span><span class="val mono">193-1105 → 196-1105</span></div>
+      <div class="field"><span class="lbl">Party casualties</span><span class="val mono">0</span></div>
+    </div>
+  </header>
+
+  <div class="verdict">
+    <div class="bigmark mono">A&minus;</div>
+    <div class="verdict-body">
+      <div class="lbl">Overall, Chapter 1</div>
+      <p>A genuinely well-built mystery, landed with a superb closing beat, run through a rules system the referee has not yet got under his hands. Everything soft in this report is mechanical friction, not craft. <strong>Session 196-1105 alone: B+</strong> — dragged down by two hours of combat and one avoidable moment of confusion at the worst possible time.</p>
+      <p class="effect mono">Task: Run a four-session investigation arc. Average (8+). Rolled 14. <strong>Effect +6 — Exceptional Success.</strong></p>
+    </div>
+    <div class="stamp">Chapter Complete</div>
+  </div>
+
+  <section>
+    <div class="sec-head">
+      <h2>Marks by category</h2>
+      <span class="lbl">Rated as referee skill levels</span>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Category</th>
+            <th scope="col">Rating</th>
+            <th scope="col">Mark</th>
+            <th scope="col">Assessor's note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cat">Prepared prose</td>
+            <td class="skill mono">Referee 3</td>
+            <td><span class="g g-a">A&minus;</span></td>
+            <td class="note">The container-yard approach was written in advance and worth the wait the table was made to give it.</td>
+          </tr>
+          <tr>
+            <td class="cat">Improvisation</td>
+            <td class="skill mono">Referee 3</td>
+            <td><span class="g g-a">A</span></td>
+            <td class="note">Boon dice, the slip on the corpse, grav bikes at the landing site. Consistently said yes and made it cost something.</td>
+          </tr>
+          <tr>
+            <td class="cat">Mystery architecture</td>
+            <td class="skill mono">Referee 3</td>
+            <td><span class="g g-a">A</span></td>
+            <td class="note">Three irreconcilable accounts, none verifiable. Textbook, and rare.</td>
+          </tr>
+          <tr>
+            <td class="cat">Chapter climax</td>
+            <td class="skill mono">Referee 3</td>
+            <td><span class="g g-a">A</span></td>
+            <td class="note">Recognition, one line, eyes closed, thirty seconds. Best moment of the campaign so far.</td>
+          </tr>
+          <tr>
+            <td class="cat">Player care</td>
+            <td class="skill mono">Referee 2</td>
+            <td><span class="g g-a">A&minus;</span></td>
+            <td class="note">Supplied backup when the party was too weak to survive the raid; refused to kill a PC on a rules gap.</td>
+          </tr>
+          <tr>
+            <td class="cat">Encounter design</td>
+            <td class="skill mono">Referee 2</td>
+            <td><span class="g g-b">B</span></td>
+            <td class="note">The base's geography escalated properly. Its occupants were interchangeable.</td>
+          </tr>
+          <tr>
+            <td class="cat">Continuity</td>
+            <td class="skill mono">Referee 1</td>
+            <td><span class="g g-b">B</span></td>
+            <td class="note">One date slip in the log; the departure from Yori predates the death notice by five days.</td>
+          </tr>
+          <tr>
+            <td class="cat">Pacing</td>
+            <td class="skill mono">Referee 1</td>
+            <td><span class="g g-b">B&minus;</span></td>
+            <td class="note">Roughly two hours of a two-and-a-quarter hour session spent in two firefights.</td>
+          </tr>
+          <tr>
+            <td class="cat">Rules command</td>
+            <td class="skill mono">Referee 0</td>
+            <td><span class="g g-c">C+</span></td>
+            <td class="note">Correct rulings, slowly reached. Scope, aiming, Leadership and the damage track were all looked up mid-fight.</td>
+          </tr>
+          <tr>
+            <td class="cat">Table technology</td>
+            <td class="skill mono">Referee &minus;3</td>
+            <td><span class="g g-c">C&minus;</span></td>
+            <td class="note">Fog of war, map scale, hidden tokens, undrawn cover — and a player's damage dice wrong all campaign.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Commendations</h2>
+      <span class="lbl">What to keep doing</span>
+    </div>
+    <div class="findings">
+
+      <div class="finding">
+        <span class="tag tag-good">Sustained across four sessions</span>
+        <h3>Three witnesses, three stories, no way to check any of them</h3>
+        <p>Pallod Norrim says Darrian Jak did it, case closed. Odoy says Ven Yasha did it and the spy story is cover for an Imperial takeover. Exceedingly Discreet says Yasha ordered Ujinka's death and cannot explain why. Every account is internally coherent, every account is uncorroborated, and each one arrived from a source with its own reason to lie. That is the hard part of running an investigation and it was done without a single railroad.</p>
+        <p class="evidence">The players' own log now records four separate items as "unverified" without complaint — a sign the ambiguity reads as deliberate rather than as the referee withholding.</p>
+      </div>
+
+      <div class="finding">
+        <span class="tag tag-good">Session 196-1105</span>
+        <h3>Harlen's exit was near-perfect</h3>
+        <p>He arrives shooting and shouting like any other mook. Then he sees Kostas, and stops. He clocks the Admiral's uniform. He says <em>"This is suboptimal"</em> — dry, competent, unbothered — closes his eyes, and the station starts dying. No console, no keypad, no incantation. It reframes him from fixer to something unexplained, gives the chapter its cliffhanger, and plants a question the players immediately started theorising about, all in about fifteen seconds of table time.</p>
+        <p class="evidence">"This is not the end," repeated over and over at his desk, is the second half of the trick: it denies the table the satisfaction of having killed him.</p>
+      </div>
+
+      <div class="finding">
+        <span class="tag tag-good">Session 196-1105</span>
+        <h3>Reading the party's weakness and fixing it before it killed anyone</h3>
+        <p>StClair dropped out, which left a boarding action to a man at END&nbsp;1 and a man who cannot shoot. Rather than let that play out, Gunner Gunnerson arrived with a joke and a very large gun. It kept the raid viable without taking it over — and when the NPC <em>did</em> start taking over, at 35 damage a shot, the rifle quietly became a carbine. Correcting your own overreach mid-scene, in front of everyone, is harder than it sounds.</p>
+        <p class="evidence">Also declined to kill Kostas on the failed medic roll, on the grounds that the rules don't actually say to — the right call, and the right reason.</p>
+      </div>
+
+      <div class="finding">
+        <span class="tag tag-good">Chapter-wide</span>
+        <h3>Leads that always pointed at another lead</h3>
+        <p>Smashed comms give up a phone number. The number is a company. The company has two buildings and a man who walks between them. The buildings have a tunnel. The flight logs run hours long. The overlong runs have a destination. Nothing in the chain was a dead end and nothing needed a nudge — the players followed it because each step was legibly a step.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Noted deficiencies</h2>
+      <span class="lbl">All correctable</span>
+    </div>
+    <div class="findings">
+
+      <div class="finding">
+        <span class="tag tag-fix">Fairness · highest priority</span>
+        <h3>The exit wasn't established before the clock started</h3>
+        <p>The party arrived on the launch. The launch was on Exceedingly Discreet's automated flight path and had detached — so the route they came in by was never the route out. That is a good detail. But the table only learned it <em>after</em> a thirty-second self-destruct was already running, which turned the chapter's climax into a rules discussion about movement rates instead of a scramble.</p>
+        <p class="evidence">Cassius, mid-countdown: "I thought we were going back up the way we came. You're telling me we can't do that?" — and had to be walked through it twice.</p>
+        <p>One line from Exceedingly Discreet during the deal would have cost nothing and fixed it entirely: <em>the launch returns on its own schedule; getting down again is your problem.</em> A timer is only exciting if the players know what they're running towards.</p>
+      </div>
+
+      <div class="finding">
+        <span class="tag tag-fix">Table technology</span>
+        <h3>A player's damage dice were wrong for the entire campaign</h3>
+        <p>Ozy's weapon was rolling a flat +3 instead of 3D6 — discovered part-way through the second firefight, after several sessions of him hitting things and achieving nothing. He had started joking about getting through the whole campaign without hurting anybody. That's a player quietly concluding his character is useless because of a spreadsheet error.</p>
+        <p class="evidence">Fixed on the spot and generously back-applied, which was the right response. But ten minutes auditing four character sheets before a combat-likely session would have caught it in August.</p>
+      </div>
+
+      <div class="finding">
+        <span class="tag tag-fix">Pacing · encounter design</span>
+        <h3>Two firefights where one would have done</h3>
+        <p>The dock-level fight and the upper-level fight are the same scene twice: unnamed staff, cover, mostly misses. The first one existed to establish that the base was occupied — which a single narrated sweep, or one guard surrendering, would have done in three minutes instead of forty. The session's actual content, Harlen and the statuette, arrived in its final twenty minutes.</p>
+        <p class="evidence">A round-by-round pattern of "that's a miss, hits the cover" repeated across both fights. When the same result recurs that often, the dice have stopped generating story.</p>
+      </div>
+
+      <div class="finding">
+        <span class="tag tag-fix">Rules command</span>
+        <h3>Correct rulings, arrived at slowly</h3>
+        <p>Scope was looked up three separate times, in two different fights, and turned out not to apply on any of them. Laser sights, aiming, Leadership, where initiative lives on the character sheet, whether an NPC at END&nbsp;0 falls over, and what a failed first aid does were all resolved live at the table. The rulings were right; the search for them is what cost the session.</p>
+        <p class="evidence">His own assessment, unprompted, mid-fight: "I need to do myself a cheat sheet."</p>
+      </div>
+
+      <div class="finding">
+        <span class="tag tag-fix">Chapter-wide</span>
+        <h3>Loaded guns left on the wall</h3>
+        <p>The newer pipe with vents at regular intervals along the tunnel. The gun emplacement Ozy opened a door onto and never entered. Both were described with enough emphasis to read as planted, and both went up with the base. If they were going somewhere, that somewhere is now vapour; if they were texture, they were too pointed to be texture.</p>
+      </div>
+
+      <div class="finding">
+        <span class="tag tag-fix">Chapter-wide</span>
+        <h3>A player character has been three hits from death since August</h3>
+        <p>Kostas has been at END&nbsp;1 since the second session and entered a boarding action needing surgery. The players own most of this — nobody went to a hospital on a world with a Class&nbsp;A starport — but four sessions of one PC being too fragile to participate is a table problem, not just a character problem, and a passing mention of what the highport's medical facilities cost would have handed them the fix without forcing it.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Recommendations for Chapter 2</h2>
+      <span class="lbl">Ordered by impact</span>
+    </div>
+    <ol class="recs">
+      <li>
+        <h3>Write the one-page cheat sheet</h3>
+        <p>Not the whole combat chapter — only what this party actually owns. The traits on their four weapons, aiming, Leadership, cover, the END&nbsp;→&nbsp;STR/DEX damage track, and the first aid window. One side of A4 kills most of the C+.</p>
+      </li>
+      <li>
+        <h3>Audit the four character sheets before any combat session</h3>
+        <p>Damage expressions, armour values, weapon traits, and that the modifiers on the sheet match the modifiers in the roll. Ten minutes, once, and it prevents another August.</p>
+      </li>
+      <li>
+        <h3>Plant the exit before you start any clock</h3>
+        <p>Whenever a scene has a timer, make sure the table already knows where the door is and roughly how far away it is. Say it in the scene before, from an NPC's mouth, so it reads as information rather than as a correction.</p>
+      </li>
+      <li>
+        <h3>Give one mook a name and a line</h3>
+        <p>The staff on that base died anonymously and the table felt nothing either way. One of them begging, surrendering, or recognising Kostas would have made the body count mean something — and cost one sentence of prep.</p>
+      </li>
+      <li>
+        <h3>Put the round counter on the screen</h3>
+        <p>"Thirty seconds. Five rounds. This is round two." The table spent the climax doing arithmetic instead of panicking. Show the number and the panic comes free.</p>
+      </li>
+      <li>
+        <h3>Decide whether Harlen is alive before they ask</h3>
+        <p>They will open with it. The answer shapes whether Exceedingly Discreet has been paid, whether the deal holds, and whether the crew have made an enemy who knows all their faces. It's the highest-leverage unresolved thing in the campaign.</p>
+      </li>
+    </ol>
+  </section>
+
+  <div class="closing">
+    <div class="lbl">Assessor's closing remark</div>
+    <p class="pull">The mystery is better than the machinery. Four sessions in, the players are theorising about psionics and Ancient artefacts and whether a dandelion in a box has played them — not one of them is theorising about whether the plot makes sense.</p>
+    <p>That is the hard thing to get right and it is already right. What's left is bookkeeping: a cheat sheet, a sheet audit, and the discipline to cut the second fight. Fix those and the B+ session becomes an A, because nothing about the story needed fixing at all.</p>
+    <p>Chapter 1 delivered a murder, a professor, a company, a dandelion, a hidden base, an explosion, and a red-haired man who shuts his eyes and things happen. Nobody died who shouldn't have. Everybody wants to know what's on the disks.</p>
+  </div>
+
+  <footer>
+    <span class="lbl">Prepared for</span><span class="lbl mono" style="color:var(--ink-mid)">Telboy, at his request</span>
+    <span class="lbl">Sources</span><span class="lbl mono" style="color:var(--ink-mid)">Session recordings 06-09-2026 · campaign log</span>
+    <span class="lbl">Standing</span><span class="lbl mono" style="color:var(--ink-mid)">Filed by a player, not a peer</span>
+  </footer>
+
+</div>
+</body>
+</html>
