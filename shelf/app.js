@@ -513,7 +513,11 @@
     const meta = document.createElement("p");
     meta.className = "poster-meta";
     const pieces = [statusLabel(item), ratingLabel(item.rating)];
-    meta.textContent = pieces.join(" · ");
+    pieces.forEach((piece) => {
+      const line = document.createElement("span");
+      line.textContent = piece;
+      meta.append(line);
+    });
 
     copy.append(title, meta);
     button.append(frame, copy);
@@ -687,7 +691,7 @@
       game: "",
       players: "",
       physical: "",
-      type: "",
+      types: [],
       bookFormat: "",
       publisher: "",
       tag: "",

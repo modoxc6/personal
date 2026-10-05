@@ -40,7 +40,6 @@ body[data-collection="ttrpgs"] {
   --focus: #edbdf7;
 }
 
-/* Reserved for the fiction shelf; no switch entry until there is data behind it. */
 body[data-collection="books"] {
   --background: #0f1319;
   --surface: #161b24;
@@ -59,13 +58,13 @@ body[data-collection="books"] {
 }
 
 html {
-  min-width: 320px;
+  min-width: 0;
   background: var(--background);
 }
 
 body {
   margin: 0;
-  min-width: 320px;
+  min-width: 0;
   background:
     radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 28rem),
     var(--background);
@@ -459,7 +458,8 @@ body[data-collection="ttrpgs"] .poster-frame {
   aspect-ratio: 1 / 1.4;
 }
 
-body[data-collection="ttrpgs"] .poster-frame img {
+body[data-collection="ttrpgs"] .poster-frame img,
+body[data-collection="ttrpgs"] .detail-cover-wrap img {
   object-fit: contain;
 }
 
@@ -493,17 +493,18 @@ body[data-collection="ttrpgs"] .poster-frame img {
   color: var(--text);
   font-weight: 700;
   line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  min-height: 2.5em;
+  overflow-wrap: anywhere;
 }
 
 .poster-meta {
+  display: grid;
+  gap: 0.15rem;
   margin-bottom: 0;
-  overflow: hidden;
   color: var(--muted);
   font-size: 0.8rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
 }
 
 .loading-grid div {
@@ -735,11 +736,13 @@ body[data-collection="ttrpgs"] .poster-frame img {
   }
 
   .collection-switch {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
+    border-radius: var(--radius);
   }
 
   .collection-switch a {
-    flex: 1 1 50%;
     text-align: center;
   }
 
