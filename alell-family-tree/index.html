@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alell Family Tree</title>
+<style>
+  :root{
+    --bg:#07090c;
+    --panel:#0d1219;
+    --line:#1e2a38;
+    --amber:#ffb641;
+    --amber-dim:#8a6420;
+    --cyan:#4fd6ff;
+    --red:#ff4d4d;
+    --green:#5bffa5;
+    --violet:#c792ff;
+    --text:#c9d6e3;
+    --mute:#5f7183;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;padding:28px 16px 60px;
+    background:
+      radial-gradient(1200px 700px at 50% -10%, #10202e 0%, transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:"DejaVu Sans Mono",Consolas,Menlo,monospace;
+    font-size:14px;line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:99;
+    background:repeating-linear-gradient(180deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px);
+    mix-blend-mode:multiply;
+  }
+  .wrap{max-width:1180px;margin:0 auto}
+
+  header{
+    border:1px solid var(--amber-dim);
+    background:linear-gradient(180deg,#141a12,#0d1219);
+    padding:16px 20px;position:relative;
+    clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));
+  }
+  h1{
+    margin:0;font-size:clamp(20px,3.6vw,34px);letter-spacing:.22em;
+    color:var(--amber);text-transform:uppercase;font-weight:700;
+    text-shadow:0 0 18px rgba(255,182,65,.35);
+  }
+  .sub{margin-top:6px;color:var(--mute);letter-spacing:.18em;font-size:11px;text-transform:uppercase}
+  .stamp{
+    display:inline-block;margin-top:10px;font-size:11px;letter-spacing:.2em;
+    color:var(--red);border:1px solid var(--red);padding:3px 8px;text-transform:uppercase;
+  }
+  @media (min-width:760px){ .stamp{position:absolute;top:14px;right:18px;margin:0} }
+
+  .panel{
+    border:1px solid var(--line);background:var(--panel);
+    padding:16px 18px 18px;margin-top:18px;position:relative;
+  }
+  .panel::after{
+    content:"";position:absolute;top:-1px;left:-1px;width:12px;height:12px;
+    border-top:2px solid var(--amber);border-left:2px solid var(--amber);
+  }
+  .ttl{
+    font-size:11px;letter-spacing:.26em;text-transform:uppercase;
+    color:var(--amber);margin:0 0 14px;font-weight:700;
+  }
+  .note{color:var(--mute);font-size:11px;letter-spacing:.06em;margin:0 0 12px}
+
+  /* tree */
+  .svgbox{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .svgbox svg{display:block;width:100%;min-width:900px;height:auto}
+  .n-name{font:700 13px "DejaVu Sans Mono",Consolas,monospace;letter-spacing:.04em;fill:#fff}
+  .n-role{font:500 10px "DejaVu Sans Mono",Consolas,monospace;letter-spacing:.06em;fill:var(--text)}
+  .n-ghost{font:500 10px "DejaVu Sans Mono",Consolas,monospace;letter-spacing:.06em;fill:var(--mute)}
+  .e-lbl{font:500 9px "DejaVu Sans Mono",Consolas,monospace;letter-spacing:.1em;text-transform:uppercase}
+  .gen{font:600 9px "DejaVu Sans Mono",Consolas,monospace;letter-spacing:.2em;fill:var(--mute)}
+
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:var(--mute)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{display:inline-block;width:22px;height:0;border-top:2px solid var(--text)}
+  .sw.dash{border-top:2px dashed var(--mute)}
+  .sw.sw-claim{border-top:2px dashed var(--red)}
+  .dot{display:inline-block;width:10px;height:10px;border:2px solid}
+
+  /* roster */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+  .card{border:1px solid var(--line);background:#0a0f15;padding:12px 14px;border-left-width:3px}
+  .card h3{margin:0;font-size:15px;letter-spacing:.06em;color:#fff}
+  .card .who{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);margin:2px 0 8px}
+  .card ul{margin:0;padding-left:16px}
+  .card li{margin:2px 0}
+  .card.backett{border-left-color:var(--amber)}
+  .card.jocell{border-left-color:var(--cyan)}
+  .card.parad{border-left-color:var(--violet)}
+  .card.other{border-left-color:var(--mute)}
+  .card.pc{border-left-color:var(--green)}
+  .card.dead{border-left-color:var(--red)}
+  .fam{font-size:12px;letter-spacing:.24em;text-transform:uppercase;margin:22px 0 10px;font-weight:700}
+  .fam.backett{color:var(--amber)} .fam.jocell{color:var(--cyan)} .fam.parad{color:var(--violet)} .fam.other{color:var(--mute)}
+  .q{color:var(--amber)}
+
+  /* claims */
+  .claims{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+  .claim{border:1px solid #4a2020;background:#140c0c;padding:12px 14px}
+  .claim b{display:block;color:var(--red);font-size:14px;letter-spacing:.06em;margin-bottom:4px}
+  .claim span{color:var(--mute);font-size:11px;display:block;margin-top:6px}
+
+  footer{margin-top:26px;color:var(--mute);font-size:10px;letter-spacing:.18em;text-transform:uppercase;text-align:center}
+  footer a{color:var(--amber)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Alell — Who's Who</h1>
+  <div class="sub">The Backetts, the Jocells and the Parads · Vaca Goya homecoming · as of session 2026-10-18</div>
+  <div class="stamp">Burial &amp; will reading tomorrow</div>
+</header>
+
+<section class="panel">
+  <p class="ttl">Family tree</p>
+  <p class="note">Built from what's been said at the table and in Tel's handouts. Dashed lines are guesses or gaps nobody has filled in. Scroll sideways on a phone.</p>
+  <div class="svgbox">
+  <svg viewBox="0 0 1140 640" role="img" aria-label="Backett family tree, with the Jocell branch and the unrelated Parads">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#ff4d4d"/>
+      </marker>
+    </defs>
+
+    <!-- generation labels -->
+    <text class="gen" x="10" y="64">GEN I</text>
+    <text class="gen" x="10" y="174">GEN II</text>
+    <text class="gen" x="10" y="284">GEN III</text>
+    <text class="gen" x="10" y="394">GEN IV</text>
+    <text class="gen" x="10" y="504">GEN V</text>
+
+    <!-- ===== edges: Backett line ===== -->
+    <g fill="none" stroke="#c9d6e3" stroke-width="1.5">
+      <!-- sibling bar: Vlen + unknown sibling -->
+      <path d="M155 34 V22 H385 V34" stroke-dasharray="5 4" stroke="#5f7183"/>
+      <!-- unknown sibling -> unknown child -->
+      <path d="M155 90 V144" stroke-dasharray="5 4" stroke="#5f7183"/>
+      <!-- unknown child -> Nairal + unknown sibling -->
+      <path d="M155 200 V227 H155 V254" stroke-dasharray="5 4" stroke="#5f7183"/>
+      <path d="M155 227 H385 V254" stroke-dasharray="5 4" stroke="#5f7183"/>
+      <!-- unknown parent -> Tomas, Hans, Merrick -->
+      <path d="M385 310 V337"/>
+      <path d="M185 337 H575"/>
+      <path d="M185 337 V364"/>
+      <path d="M385 337 V364"/>
+      <path d="M575 337 V364" stroke-dasharray="5 4" stroke="#5f7183"/>
+      <!-- Merrick = Henna -->
+      <path d="M660 392 H700" stroke-width="2"/>
+      <path d="M660 397 H700" stroke-width="2"/>
+      <!-- Tomas -> Gunter -->
+      <path d="M185 420 V474"/>
+      <!-- Merrick/Henna -> Kostas -->
+      <path d="M680 397 V447 H680 V474"/>
+    </g>
+
+    <!-- Jocell branch: link back to the Backett line -->
+    <path d="M240 172 H985 V254" fill="none" stroke="#4fd6ff" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text class="e-lbl" x="600" y="164" fill="#4fd6ff">a Backett cousin · exact link unknown</text>
+    <path d="M985 310 V364" fill="none" stroke="#4fd6ff" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text class="e-lbl" x="995" y="342" fill="#4fd6ff">generations?</text>
+    <path d="M985 420 V474" fill="none" stroke="#4fd6ff" stroke-width="1.5"/>
+
+    <!-- Orisa: claimed marriage -->
+    <path d="M470 62 H610" fill="none" stroke="#ff4d4d" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <text class="e-lbl" x="482" y="54" fill="#ff4d4d">claims wife</text>
+
+    <!-- ===== nodes ===== -->
+    <!-- Gen I -->
+    <g>
+      <rect x="70" y="34" width="170" height="56" fill="#0a0f15" stroke="#5f7183" stroke-dasharray="4 3"/>
+      <text class="n-ghost" x="155" y="58" text-anchor="middle">Vlen's sibling</text>
+      <text class="n-ghost" x="155" y="74" text-anchor="middle">unknown · inferred</text>
+    </g>
+    <g>
+      <rect x="300" y="34" width="170" height="56" fill="#160b0b" stroke="#ff4d4d" stroke-width="1.5"/>
+      <text class="n-name" x="385" y="57" text-anchor="middle">VLEN BACKETT</text>
+      <text class="n-role" x="385" y="74" text-anchor="middle">murdered · 180+ yrs old</text>
+    </g>
+    <g>
+      <rect x="610" y="34" width="170" height="56" fill="#160b0b" stroke="#ff4d4d" stroke-dasharray="6 4"/>
+      <text class="n-name" x="695" y="57" text-anchor="middle">ORISA BACKETT</text>
+      <text class="n-role" x="695" y="74" text-anchor="middle">"widow" · certificate</text>
+    </g>
+
+    <!-- Gen II -->
+    <g>
+      <rect x="70" y="144" width="170" height="56" fill="#0a0f15" stroke="#5f7183" stroke-dasharray="4 3"/>
+      <text class="n-ghost" x="155" y="168" text-anchor="middle">Nairal's parent</text>
+      <text class="n-ghost" x="155" y="184" text-anchor="middle">unknown · inferred</text>
+    </g>
+
+    <!-- Gen III -->
+    <g>
+      <rect x="70" y="254" width="170" height="56" fill="#141006" stroke="#ffb641" stroke-width="1.5"/>
+      <text class="n-name" x="155" y="277" text-anchor="middle">NAIRAL BACKETT</text>
+      <text class="n-role" x="155" y="294" text-anchor="middle">92 · great-uncle</text>
+    </g>
+    <g>
+      <rect x="300" y="254" width="170" height="56" fill="#0a0f15" stroke="#5f7183" stroke-dasharray="4 3"/>
+      <text class="n-ghost" x="385" y="278" text-anchor="middle">Nairal's sibling</text>
+      <text class="n-ghost" x="385" y="294" text-anchor="middle">parent of Tomas &amp; Hans</text>
+    </g>
+    <g>
+      <rect x="900" y="254" width="170" height="56" fill="#0a0f15" stroke="#4fd6ff" stroke-dasharray="4 3"/>
+      <text class="n-ghost" x="985" y="275" text-anchor="middle">Backett cousin</text>
+      <text class="n-ghost" x="985" y="291" text-anchor="middle">left Vaca Goya for</text>
+      <text class="n-ghost" x="985" y="305" text-anchor="middle">the starport</text>
+    </g>
+
+    <!-- Gen IV -->
+    <g>
+      <rect x="100" y="364" width="170" height="56" fill="#141006" stroke="#ffb641" stroke-width="1.5"/>
+      <text class="n-name" x="185" y="387" text-anchor="middle">TOMAS BACKETT</text>
+      <text class="n-role" x="185" y="404" text-anchor="middle">merchant · family head</text>
+    </g>
+    <g>
+      <rect x="300" y="364" width="170" height="56" fill="#141006" stroke="#ffb641" stroke-width="1.5"/>
+      <text class="n-name" x="385" y="387" text-anchor="middle">HANS BACKETT</text>
+      <text class="n-role" x="385" y="404" text-anchor="middle">hunter &amp; trapper</text>
+    </g>
+    <g>
+      <rect x="490" y="364" width="170" height="56" fill="#141006" stroke="#ffb641" stroke-width="1.5"/>
+      <text class="n-name" x="575" y="387" text-anchor="middle">MERRICK BACKETT</text>
+      <text class="n-role" x="575" y="404" text-anchor="middle">Kostas's father</text>
+    </g>
+    <g>
+      <rect x="700" y="364" width="170" height="56" fill="#141006" stroke="#ffb641" stroke-width="1.5"/>
+      <text class="n-name" x="785" y="387" text-anchor="middle">HENNA BACKETT</text>
+      <text class="n-role" x="785" y="404" text-anchor="middle">Kostas's mother</text>
+    </g>
+    <g>
+      <rect x="900" y="364" width="170" height="56" fill="#06121a" stroke="#4fd6ff" stroke-width="1.5"/>
+      <text class="n-name" x="985" y="387" text-anchor="middle">MARISA JOCELL</text>
+      <text class="n-role" x="985" y="404" text-anchor="middle">socialite · starport</text>
+    </g>
+
+    <!-- Gen V -->
+    <g>
+      <rect x="100" y="474" width="170" height="56" fill="#141006" stroke="#ffb641" stroke-width="1.5"/>
+      <text class="n-name" x="185" y="497" text-anchor="middle">GUNTER BACKETT</text>
+      <text class="n-role" x="185" y="514" text-anchor="middle">15 · Tomas's son</text>
+    </g>
+    <g>
+      <rect x="595" y="474" width="170" height="56" fill="#07160e" stroke="#5bffa5" stroke-width="2"/>
+      <text class="n-name" x="680" y="497" text-anchor="middle">KOSTAS BACKETT</text>
+      <text class="n-role" x="680" y="514" text-anchor="middle">PC · next of kin</text>
+    </g>
+    <g>
+      <rect x="900" y="474" width="170" height="56" fill="#06121a" stroke="#4fd6ff" stroke-width="1.5"/>
+      <text class="n-name" x="985" y="497" text-anchor="middle">BARD JOCELL</text>
+      <text class="n-role" x="985" y="514" text-anchor="middle">Marisa's son</text>
+    </g>
+
+    <!-- the unrelated Parads -->
+    <g>
+      <rect x="70" y="566" width="390" height="62" fill="#0f0a16" stroke="#c792ff" stroke-width="1.5"/>
+      <text class="n-name" x="86" y="590" fill="#c792ff">THE PARADS</text>
+      <text class="n-role" x="86" y="608">no relation · Yusul Parad (head) + Morgan (muscle)</text>
+      <text class="n-role" x="86" y="621">criminal gang with a fearsome reputation</text>
+    </g>
+    <path d="M285 566 V112 L322 93" fill="none" stroke="#ff4d4d" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#arr)"/>
+    <text class="e-lbl" x="291" y="552" fill="#ff4d4d">owed Cr1,000,000</text>
+  </svg>
+  </div>
+  <div class="legend">
+    <span><i class="sw"></i> stated</span>
+    <span><i class="sw dash"></i> inferred / unknown</span>
+    <span><i class="sw sw-claim"></i> disputed claim or debt</span>
+    <span><i class="dot" style="border-color:var(--amber)"></i> Backett</span>
+    <span><i class="dot" style="border-color:var(--cyan)"></i> Jocell</span>
+    <span><i class="dot" style="border-color:var(--violet)"></i> Parad</span>
+    <span><i class="dot" style="border-color:var(--green)"></i> player character</span>
+    <span><i class="dot" style="border-color:var(--red)"></i> the dead man and his "widow"</span>
+  </div>
+</section>
+
+<section class="panel">
+  <p class="ttl">How the tree was worked out</p>
+  <ul class="note" style="padding-left:16px;color:var(--text)">
+    <li>Tomas and Hans are brothers, and Nairal is their uncle, so a sibling of Nairal's must be their parent. (Tel's first handout called them cousins; the table corrected it.)</li>
+    <li>Kostas calls Tomas "another uncle", and Nairal is his great-uncle, so Merrick is drawn as Tomas and Hans's brother. That's a guess; the dashed line marks it.</li>
+    <li>Nairal, 92, remembers being introduced to Vlen as <span class="q">his</span> great-uncle. That puts Vlen two generations above Nairal, beside an unknown sibling who is Nairal's grandparent.</li>
+    <li>The Jocells come from "a cousin who left Vaca Goya to find work in the starport". Nobody has said which generation, so they hang off the family by a dashed line.</li>
+  </ul>
+</section>
+
+<section class="panel">
+  <p class="ttl">Who wants what from Vlen's estate</p>
+  <p class="note">There's no will in hand. Porter Sajan has asked Kostas to sort all of this out before tomorrow.</p>
+  <div class="claims">
+    <div class="claim"><b>The Brotherhood of Humaniti</b>Vlen was "Initiate Zu". He signed all his worldly goods over when he joined, then fled their monastery in the night.<span>Evidence: signed paperwork. They also want a "DNA" ceremony.</span></div>
+    <div class="claim"><b>Orisa Backett</b>Says she's Vlen's widow. Nobody in the family knew he had a wife.<span>Evidence: a wedding certificate. Tomas: "Rubbish."</span></div>
+    <div class="claim"><b>Yusul Parad</b>Vlen owes him a cool Cr1,000,000. He'd take ancient artefacts instead.<span>Evidence: none shown. The Admiral wants receipts.</span></div>
+    <div class="claim"><b>Marisa Jocell</b>"He owes me his spaceship."<span>Evidence: none shown. What spaceship?</span></div>
+  </div>
+</section>
+
+<section class="panel">
+  <p class="ttl">Who's who</p>
+
+  <div class="fam backett">The Backetts · Vaca Goya</div>
+  <div class="grid">
+    <div class="card dead"><h3>Vlen Backett</h3><div class="who">Deceased · "Uncle Vlen"</div><ul>
+      <li>Murdered on Regina. Body of a 52-year-old, records say 180+</li>
+      <li>Ran from the Brotherhood as Initiate Zu</li>
+      <li>Had a lodge in the woods nobody can find. Off-world guests went there</li>
+      <li>Yusul says he traded in ancient artefacts</li>
+    </ul></div>
+    <div class="card dead"><h3>Orisa Backett</h3><div class="who">Claims to be Vlen's widow</div><ul>
+      <li>Southern accent, shy entrance, big hugs</li>
+      <li>Calls Kostas "my little nephew"</li>
+      <li>Shows her wedding certificate to anyone who'll look</li>
+    </ul></div>
+    <div class="card backett"><h3>Nairal Backett</h3><div class="who">92 · Kostas's great-uncle</div><ul>
+      <li>"Mind like a steel trap", near death's door</li>
+      <li>Cried to see Kostas, one of the few relatives he likes</li>
+      <li>Vlen was <em>his</em> great-uncle. "Never understood it"</li>
+    </ul></div>
+    <div class="card backett"><h3>Tomas Backett</h3><div class="who">Merchant · head of the family</div><ul>
+      <li>Never liked Vlen. Here to see "the old charlatan" buried</li>
+      <li>Trades furs, minerals and ores</li>
+      <li>Ozy is his "neutral third party". Won't touch the monks</li>
+    </ul></div>
+    <div class="card backett"><h3>Hans Backett</h3><div class="who">Hunter &amp; trapper · Tomas's brother</div><ul>
+      <li>Talks up a fortune hidden in Vlen's lodge</li>
+      <li>Kostas's parents think he's looking for an angle</li>
+      <li>Mortified by the Brotherhood's hugs</li>
+    </ul></div>
+    <div class="card backett"><h3>Gunter Backett</h3><div class="who">15 · Tomas's son</div><ul>
+      <li>Always wants Kostas's off-world stories</li>
+      <li>Not at the homecoming, "doing his own work"</li>
+    </ul></div>
+    <div class="card backett"><h3>Merrick Backett</h3><div class="who">Kostas's father</div><ul>
+      <li>"You look a mess, boy"</li>
+      <li>"We're all waiting for that will reading"</li>
+      <li>Says it's too dangerous to fly out this late in the day</li>
+    </ul></div>
+    <div class="card backett"><h3>Henna Backett</h3><div class="who">Kostas's mother</div><ul>
+      <li>Dotes on the Admiral: "so good to see you <em>again</em>"</li>
+      <li>Wants to know if the coffee is up to standard</li>
+    </ul></div>
+    <div class="card pc"><h3>Kostas Backett</h3><div class="who">Player character · next of kin</div><ul>
+      <li>Brought the body home. No will</li>
+      <li>Holds Rao's map of where Vlen went into the jungle</li>
+      <li>Now the intermediary for every claim</li>
+    </ul></div>
+  </div>
+
+  <div class="fam jocell">The Jocells · the starport</div>
+  <div class="grid">
+    <div class="card jocell"><h3>Marisa Jocell</h3><div class="who">Leads the Jocell delegation</div><ul>
+      <li>Insufferable socialite. Looks down on her "country bumpkin cousins"</li>
+      <li>"He owes me his spaceship"</li>
+      <li>Overawed by the Admiral. Recoiled from StClair</li>
+    </ul></div>
+    <div class="card jocell"><h3>Bard Jocell</h3><div class="who">Marisa's son</div><ul>
+      <li>Fawns over off-world nobles and tourists</li>
+      <li>"But Mother, his medals!"</li>
+    </ul></div>
+  </div>
+
+  <div class="fam parad">The Parads · no relation</div>
+  <div class="grid">
+    <div class="card parad"><h3>Yusul Parad</h3><div class="who">Head of the family gang</div><ul>
+      <li>Hates the Backetts, likes Kostas</li>
+      <li>Owed "a cool million credits". Not a patient man</li>
+      <li>Calls the Admiral "lippy". Hints at accidents</li>
+    </ul></div>
+    <div class="card parad"><h3>Morgan</h3><div class="who">Yusul's muscle</div><ul>
+      <li>A hunk of muscle with no gun, since guns are illegal</li>
+    </ul></div>
+  </div>
+
+  <div class="fam other">Also at the homecoming</div>
+  <div class="grid">
+    <div class="card other"><h3>Porter Sajan</h3><div class="who">Village porter, magistrate &amp; spiritual leader</div><ul>
+      <li>Doleful voice, ceremonial robes</li>
+      <li>Has the body. Expected a will</li>
+      <li>Handed every claim to Kostas without waiting for a yes</li>
+    </ul></div>
+    <div class="card other"><h3>Aail</h3><div class="who">Brotherhood of Humaniti envoy</div><ul>
+      <li>Dancing entrance, three chanting monks</li>
+      <li>Claims everything Vlen owned</li>
+      <li>May have picked up something from StClair's plants</li>
+    </ul></div>
+    <div class="card other"><h3>Rao</h3><div class="who">Shuttle pilot, Alell Starport</div><ul>
+      <li>Flew Vlen into the jungle, fetched him a week later</li>
+      <li>Sold Kostas the map. Kostas has her number</li>
+    </ul></div>
+  </div>
+</section>
+
+<footer>
+  Traveller · Secrets of the Ancients · <a href="https://modoxc6.github.io/traveller-sota/">campaign wiki</a>
+</footer>
+
+</div>
+</body>
+</html>
