@@ -10,14 +10,19 @@
   html,body{ margin:0; padding:0; background:#161310; }
   body{ font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; color:#f4ecd8; }
 
-  .stage{ position:relative; overflow:hidden; padding:64px 24px 80px; }
+  .stage{ position:relative; padding:64px 24px 80px; }
   .deco-riso{
     position:absolute; inset:0; z-index:0;
     background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
     background-size: 14px 14px;
   }
 
-  .hub-header{ max-width:760px; margin:0 auto 44px; position:relative; z-index:2; }
+  /* Layout: sticky "jump to" menu on the left (a strip across the top on phones), sections of cards on the right */
+  .layout{
+    max-width:1000px; margin:0 auto; position:relative; z-index:2;
+    display:grid; grid-template-columns:170px minmax(0,1fr); gap:40px; align-items:start;
+  }
+  .hub-header{ margin:0 0 44px; }
   .eyebrow{
     font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
     font-size:12px; letter-spacing:.22em; text-transform:uppercase;
@@ -34,16 +39,41 @@
     color:#ff4d94; mix-blend-mode:screen;
   }
 
-  .card-grid{
-    max-width:760px; margin:0 auto; position:relative; z-index:2;
-    display:grid; grid-template-columns:1fr 1fr; gap:20px;
+  .jump{
+    position:sticky; top:0; padding-top:24px; display:grid; gap:4px;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
   }
-  .card-grid + .section-title{ margin-top:52px; }
+  .jump .nh{ font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#8c8069; font-weight:700; margin-bottom:8px; }
+  .jump a{
+    display:flex; justify-content:space-between; gap:8px; padding:7px 10px;
+    border-left:2px solid var(--c); color:var(--c); text-decoration:none;
+    font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700;
+  }
+  .jump a span{ color:#8c8069; font-variant-numeric:tabular-nums; }
+  .jump a:hover, .jump a:focus-visible{ background:#ffffff10; outline:none; }
+
+  .group{ scroll-margin-top:24px; }
+  .group + .group{ margin-top:52px; }
   .section-title{
-    max-width:760px; margin:0 auto 18px; position:relative; z-index:2;
+    margin:0 0 18px;
     font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
     font-size:12px; letter-spacing:.22em; text-transform:uppercase;
-    color:#ffb100; font-weight:700;
+    color:var(--c); font-weight:700;
+  }
+  .card-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+
+  @media (max-width:760px){
+    .stage{ padding:40px 16px 64px; }
+    .layout{ grid-template-columns:1fr; gap:0; }
+    .hub-header{ margin-bottom:24px; }
+    .jump{
+      display:flex; overflow-x:auto; gap:6px; padding:10px 16px; margin:0 -16px 28px;
+      background:#161310; border-bottom:1px solid #35302a; z-index:3; scrollbar-width:none;
+    }
+    .jump::-webkit-scrollbar{ display:none; }
+    .jump .nh{ display:none; }
+    .jump a{ flex:none; border-left:0; border-bottom:2px solid var(--c); }
+    .group{ scroll-margin-top:64px; }
   }
   @media (max-width:640px){ .card-grid{ grid-template-columns:1fr; } }
 
@@ -92,11 +122,70 @@
 <main class="stage">
   <div class="deco-riso" aria-hidden="true"></div>
 
+  <div class="layout">
+  <nav class="jump" id="jump" aria-label="Sections"><div class="nh">Jump to</div></nav>
+
+  <div>
   <header class="hub-header">
     <p class="eyebrow">Personal</p>
     <h1 data-text="Projects">Projects</h1>
   </header>
 
+  <!-- Add a card to a section's grid and the menu count updates itself; a new section needs an id, a --c colour and a title -->
+  <section class="group" id="home" style="--c:#00c2a8">
+  <h2 class="section-title">Home and shopping</h2>
+  <div class="card-grid">
+    <a class="card" href="https://claude.ai/artifact/4JDMwbqwr4qbvoAP5txVV3" target="_blank" rel="noopener">
+      <span class="card-flag" aria-hidden="true"></span>
+      <svg class="card-trace" aria-hidden="true"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="11" pathLength="100"></rect></svg>
+      <span class="card-tag">Daily Sweep</span>
+      <h2>House Search</h2>
+      <p>Listings from the daily house search, ready for a yes, maybe or no.</p>
+      <span class="card-link">Open →</span>
+    </a>
+    <a class="card" href="https://claude.ai/artifact/G9huELv42Y5trKKGcuusu7" target="_blank" rel="noopener">
+      <span class="card-flag" aria-hidden="true"></span>
+      <svg class="card-trace" aria-hidden="true"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="11" pathLength="100"></rect></svg>
+      <span class="card-tag">Daily Sweep</span>
+      <h2>Sale Watch</h2>
+      <p>Reduced clothes in my size, best match first, plus the shortlist.</p>
+      <span class="card-link">Open →</span>
+    </a>
+    <a class="card" href="https://claude.ai/artifact/ULkcczrNJFxvQsQ3T8Nu3x" target="_blank" rel="noopener">
+      <span class="card-flag" aria-hidden="true"></span>
+      <svg class="card-trace" aria-hidden="true"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="11" pathLength="100"></rect></svg>
+      <span class="card-tag">Style Quiz</span>
+      <h2>Leesh’s Style Finder</h2>
+      <p>Questions and rounds of cards to rate, narrowing in on Leesh’s style.</p>
+      <span class="card-link">Open →</span>
+    </a>
+  </div>
+  </section>
+
+  <section class="group" id="film" style="--c:#ff4d94">
+  <h2 class="section-title">Film and TV</h2>
+  <div class="card-grid">
+    <a class="card" href="https://modoxc6.github.io/personal/shelf/" target="_blank" rel="noopener">
+      <span class="card-flag" aria-hidden="true"></span>
+      <svg class="card-trace" aria-hidden="true"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="11" pathLength="100"></rect></svg>
+      <span class="card-tag">Watch Log</span>
+      <h2>The Shelf</h2>
+      <p>A fast, filterable poster library for my television and film log.</p>
+      <span class="card-link">Browse →</span>
+    </a>
+    <a class="card" href="https://claude.ai/artifact/N8B5NUpnCsePuNSWXcFnRf" target="_blank" rel="noopener">
+      <span class="card-flag" aria-hidden="true"></span>
+      <svg class="card-trace" aria-hidden="true"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="11" pathLength="100"></rect></svg>
+      <span class="card-tag">Weekly Sweep</span>
+      <h2>Ebert Watch</h2>
+      <p>New rogerebert.com reviews, ranked, with a queue for my Letterboxd watchlist.</p>
+      <span class="card-link">Open →</span>
+    </a>
+  </div>
+  </section>
+
+  <section class="group" id="tabletop" style="--c:#ffb100">
+  <h2 class="section-title">Tabletop</h2>
   <div class="card-grid">
     <a class="card" href="https://modoxc6.github.io/sci-fi-dice-roller/" target="_blank" rel="noopener">
       <span class="card-flag" aria-hidden="true"></span>
@@ -106,26 +195,19 @@
       <p>An animated dice roller for tabletop RPG sessions.</p>
       <span class="card-link">Launch →</span>
     </a>
-    <a class="card" href="https://modoxc6.github.io/personal/shelf/" target="_blank" rel="noopener">
+    <a class="card" href="https://claude.ai/artifact/MpYqee9CQeAvKhUb4fiExv" target="_blank" rel="noopener">
       <span class="card-flag" aria-hidden="true"></span>
       <svg class="card-trace" aria-hidden="true"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="11" pathLength="100"></rect></svg>
-      <span class="card-tag">Watch Log</span>
-      <h2>The Shelf</h2>
-      <p>A fast, filterable poster library for my television and film log.</p>
-      <span class="card-link">Browse →</span>
-    </a>
-    <a class="card" href="https://claude.ai/artifact/CBKTfnrB3TgcFLEisYcJNd" target="_blank" rel="noopener">
-      <span class="card-flag" aria-hidden="true"></span>
-      <svg class="card-trace" aria-hidden="true"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="11" pathLength="100"></rect></svg>
-      <span class="card-tag">Reference Sheet</span>
-      <h2>Symbol Sheet</h2>
-      <p>Every symbol picked up in the VS Code learning sessions, grouped by language.</p>
+      <span class="card-tag">Daily Sweep</span>
+      <h2>TTRPG Hoard</h2>
+      <p>Stories from my TTRPG newsletters, ranked by how likely I am to want them.</p>
       <span class="card-link">Open →</span>
     </a>
   </div>
+  </section>
 
+  <section class="group" id="traveller" style="--c:#7dd3fc">
   <h2 class="section-title">Traveller</h2>
-
   <div class="card-grid">
     <a class="card" href="https://modoxc6.github.io/traveller-sota/" target="_blank" rel="noopener">
       <span class="card-flag" aria-hidden="true"></span>
@@ -177,6 +259,45 @@
       <span class="card-link">Open →</span>
     </a>
   </div>
+  </section>
+
+  <section class="group" id="tools" style="--c:#c3e35a">
+  <h2 class="section-title">Tools and reference</h2>
+  <div class="card-grid">
+    <a class="card" href="https://claude.ai/artifact/EMXLw8rLYUY5zaaJae361T" target="_blank" rel="noopener">
+      <span class="card-flag" aria-hidden="true"></span>
+      <svg class="card-trace" aria-hidden="true"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="11" pathLength="100"></rect></svg>
+      <span class="card-tag">Planner</span>
+      <h2>Countback</h2>
+      <p>Set when you need to arrive and it works back to when to start getting ready.</p>
+      <span class="card-link">Open →</span>
+    </a>
+    <a class="card" href="https://claude.ai/artifact/CBKTfnrB3TgcFLEisYcJNd" target="_blank" rel="noopener">
+      <span class="card-flag" aria-hidden="true"></span>
+      <svg class="card-trace" aria-hidden="true"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="11" pathLength="100"></rect></svg>
+      <span class="card-tag">Reference Sheet</span>
+      <h2>Symbol Sheet</h2>
+      <p>Every symbol picked up in the VS Code learning sessions, grouped by language.</p>
+      <span class="card-link">Open →</span>
+    </a>
+  </div>
+  </section>
+  </div>
+  </div>
 </main>
+<script>
+// Menu is built from the sections, so its links and counts never drift from the cards
+const jump = document.getElementById("jump");
+for (const s of document.querySelectorAll(".group")) {
+  const a = document.createElement("a");
+  a.href = "#" + s.id;
+  a.style.setProperty("--c", s.style.getPropertyValue("--c"));
+  a.append(s.querySelector(".section-title").textContent);
+  const n = document.createElement("span");
+  n.textContent = s.querySelectorAll(".card").length;
+  a.append(n);
+  jump.append(a);
+}
+</script>
 </body>
 </html>
